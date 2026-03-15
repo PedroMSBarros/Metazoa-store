@@ -24,7 +24,7 @@ function Hero() {
             <a href="#catalogo" className="bg-[#6B5B3E] text-white px-6 py-3 rounded text-sm font-medium flex items-center gap-2 hover:bg-[#2C2416] transition-colors">
               Ver catalogo <ArrowRight size={16} />
             </a>
-            <a href="https://wa.me/5511999999999" target="_blank" rel="noreferrer" className="border border-[#9C8A6A] text-[#6B5B3E] px-6 py-3 rounded text-sm font-medium flex items-center gap-2 hover:bg-[#6B5B3E] hover:text-white transition-colors">
+            <a href="https://wa.me/5511971526750" target="_blank" rel="noreferrer" className="border border-[#9C8A6A] text-[#6B5B3E] px-6 py-3 rounded text-sm font-medium flex items-center gap-2 hover:bg-[#6B5B3E] hover:text-white transition-colors">
               <MessageCircle size={16} /> Falar conosco
             </a>
           </motion.div>

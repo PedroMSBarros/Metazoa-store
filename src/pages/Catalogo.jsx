@@ -66,7 +66,7 @@ function Catalogo() {
                   <span className="font-serif italic text-sm text-[#7A6A52] block mb-3">{peixe.nome_cientifico}</span>
                   <div className="flex justify-between items-center pt-3 border-t border-[#E8E3CC]">
                     <span className="font-serif text-2xl font-semibold text-[#6B5B3E]">{peixe.preco}</span>
-                    <a href={"https://wa.me/5511999999999?text=Ola! Tenho interesse no " + peixe.nome} target="_blank" rel="noreferrer" className="bg-[#5B8C7A] text-white text-sm px-4 py-2 rounded flex items-center gap-1 hover:bg-[#3D6B5A] transition-colors">
+                    <a href={"https://wa.me/5511971526750?text=Ola! Tenho interesse no " + peixe.nome} target="_blank" rel="noreferrer" className="bg-[#5B8C7A] text-white text-sm px-4 py-2 rounded flex items-center gap-1 hover:bg-[#3D6B5A] transition-colors">
                       <MessageCircle size={14} /> Consultar
                     </a>
                   </div>

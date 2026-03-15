@@ -106,10 +106,10 @@ function PeixeDetalhe() {
             </div>
 
             <div className="flex flex-col gap-3">
-              <a href={"https://wa.me/5511999999999?text=" + encodeURIComponent(msgWhatsApp)} target="_blank" rel="noreferrer" className="bg-[#25D366] text-white px-6 py-4 rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-[#1ebe5d] transition-colors">
+              <a href={"https://wa.me/5511971526750?text=" + encodeURIComponent(msgWhatsApp)} target="_blank" rel="noreferrer" className="bg-[#25D366] text-white px-6 py-4 rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-[#1ebe5d] transition-colors">
                 <MessageCircle size={20} /> Comprar pelo WhatsApp
               </a>
-              <a href={"https://wa.me/5511999999999?text=" + encodeURIComponent("Ola! Tenho interesse no " + peixe.nome + " e gostaria de saber mais sobre este peixe.")} target="_blank" rel="noreferrer" className="border border-[#9C8A6A] text-[#6B5B3E] px-6 py-4 rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-[#6B5B3E] hover:text-white transition-colors">
+              <a href={"https://wa.me/5511971526750?text=" + encodeURIComponent("Ola! Tenho interesse no " + peixe.nome + " e gostaria de saber mais sobre este peixe.")} target="_blank" rel="noreferrer" className="border border-[#9C8A6A] text-[#6B5B3E] px-6 py-4 rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-[#6B5B3E] hover:text-white transition-colors">
                 <ShoppingCart size={20} /> Adicionar ao pedido
               </a>
             </div>

@@ -20,7 +20,7 @@ function Header() {
           <Link to="/" className="text-sm text-[#7A6A52] hover:text-[#5B8C7A] transition-colors">Início</Link>
           <Link to="/catalogo" className="text-sm text-[#7A6A52] hover:text-[#5B8C7A] transition-colors">Catálogo</Link>
           <Link to="/sobre" className="text-sm text-[#7A6A52] hover:text-[#5B8C7A] transition-colors">Sobre</Link>
-          <a href="https://wa.me/5511999999999" target="_blank" rel="noreferrer" className="bg-[#5B8C7A] text-white text-sm px-4 py-2 rounded-full hover:bg-[#3D6B5A] transition-colors">
+          <a href="https://wa.me/5511971526750" target="_blank" rel="noreferrer" className="bg-[#5B8C7A] text-white text-sm px-4 py-2 rounded-full hover:bg-[#3D6B5A] transition-colors">
             WhatsApp
           </a>
         </nav>
@@ -35,7 +35,7 @@ function Header() {
           <Link to="/" onClick={() => setMenuAberto(false)} className="text-[#2C2416]">Início</Link>
           <Link to="/catalogo" onClick={() => setMenuAberto(false)} className="text-[#2C2416]">Catálogo</Link>
           <Link to="/sobre" onClick={() => setMenuAberto(false)} className="text-[#2C2416]">Sobre</Link>
-          <a href="https://wa.me/5511999999999" target="_blank" rel="noreferrer" className="text-[#5B8C7A] font-semibold">
+          <a href="https://wa.me/5511971526750" target="_blank" rel="noreferrer" className="text-[#5B8C7A] font-semibold">
             WhatsApp
           </a>
         </div>

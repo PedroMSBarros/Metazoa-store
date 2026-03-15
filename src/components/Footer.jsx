@@ -16,10 +16,10 @@ function Footer() {
         </h2>
         <p className="text-white/60 max-w-md mx-auto mb-8">Entre em contato pelo WhatsApp e tire todas as suas duvidas. Atendemos de segunda a sabado.</p>
         <div className="flex gap-4 justify-center flex-wrap">
-          <a href="https://wa.me/5511999999999?text=Ola! Vim pelo site e gostaria de saber mais sobre os peixes." target="_blank" rel="noreferrer" className="bg-[#25D366] text-white px-6 py-3 rounded text-sm font-medium flex items-center gap-2 hover:bg-[#1ebe5d] transition-colors">
+          <a href="https://wa.me/5511971526750?text=Ola! Vim pelo site e gostaria de saber mais sobre os peixes." target="_blank" rel="noreferrer" className="bg-[#25D366] text-white px-6 py-3 rounded text-sm font-medium flex items-center gap-2 hover:bg-[#1ebe5d] transition-colors">
             💬 Falar pelo WhatsApp
           </a>
-          <a href="https://instagram.com/metazoa.store" target="_blank" rel="noreferrer" className="border border-white/30 text-white px-6 py-3 rounded text-sm font-medium flex items-center gap-2 hover:border-white hover:bg-white/5 transition-colors">
+          <a href="https://https://www.instagram.com/metazoa_store/" target="_blank" rel="noreferrer" className="border border-white/30 text-white px-6 py-3 rounded text-sm font-medium flex items-center gap-2 hover:border-white hover:bg-white/5 transition-colors">
             📷 Instagram
           </a>
         </div>
