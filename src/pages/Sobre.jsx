@@ -41,7 +41,7 @@ function Sobre() {
           </motion.div>
 
           <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7 }}>
-            <img src="https://images.unsplash.com/photo-1559181567-c3190bfbdf2e?w=600&q=80" alt="Aquario Metazoa" className="w-full aspect-[4/3] object-cover rounded-xl" />
+            <img src="https://i.postimg.cc/K8zrgg66/Whats-App-Image-2026-03-15-at-14-24-49.jpg" alt="Peixes Metazoa" className="w-full aspect-[4/3] object-cover rounded-xl" />
           </motion.div>
         </div>
 

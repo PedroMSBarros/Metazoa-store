@@ -39,8 +39,7 @@ function Sobre() {
         </motion.div>
 
         <motion.div className="hidden md:block relative" initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}>
-          <img src="https://images.unsplash.com/photo-1559181567-c3190bfbdf2e?w=600&q=80" alt="Aquario Metazoa" className="w-full aspect-[4/5] object-cover rounded-xl" />
-          <img src="https://images.unsplash.com/photo-1571752726703-5e7d1f6a986d?w=400&q=80" alt="Peixe ornamental" className="absolute -bottom-6 -right-6 w-1/2 aspect-square object-cover rounded-xl border-4 border-[#E8E3CC]" />
+          <img src="https://i.postimg.cc/K8zrgg66/Whats-App-Image-2026-03-15-at-14-24-49.jpg" className="w-full aspect-[4/5] object-cover rounded-xl" />
           <div className="absolute -top-4 -left-4 w-16 h-16 border-2 border-[#5B8C7A] rounded opacity-40"></div>
         </motion.div>
 
