@@ -1,0 +1,128 @@
+import { useEffect, useState } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import { motion } from 'framer-motion'
+import { ArrowLeft, MessageCircle, ShoppingCart, Thermometer, Droplets, Fish, Clock } from 'lucide-react'
+import Header from '../components/Header'
+import Footer from '../components/Footer'
+import { supabase } from '../lib/supabase'
+
+function PeixeDetalhe() {
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const [peixe, setPeixe] = useState(null)
+  const [carregando, setCarregando] = useState(true)
+
+  useEffect(() => {
+    async function buscarPeixe() {
+      const { data, error } = await supabase.from('peixes').select('*').eq('id', id).single()
+      if (!error) setPeixe(data)
+      setCarregando(false)
+    }
+    buscarPeixe()
+  }, [id])
+
+  if (carregando) {
+    return (
+      <div className="min-h-screen bg-[#F4F1E1] flex items-center justify-center">
+        <div className="text-[#5B8C7A] text-lg font-serif">Carregando...</div>
+      </div>
+    )
+  }
+
+  if (!peixe) {
+    return (
+      <div className="min-h-screen bg-[#F4F1E1] flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-5xl mb-4">🐠</div>
+          <p className="text-[#7A6A52]">Peixe nao encontrado.</p>
+          <button onClick={() => navigate('/catalogo')} className="mt-4 text-[#5B8C7A] underline">Voltar ao catalogo</button>
+        </div>
+      </div>
+    )
+  }
+
+  const msgWhatsApp = "Ola! Vim pelo site e tenho interesse no " + peixe.nome + " (" + peixe.preco + "). Poderia me passar mais informacoes?"
+
+  return (
+    <div className="bg-[#F4F1E1] min-h-screen">
+      <Header />
+
+      <div className="pt-24 pb-20 px-6 max-w-6xl mx-auto">
+
+        <motion.button onClick={() => navigate(-1)} className="flex items-center gap-2 text-[#7A6A52] hover:text-[#5B8C7A] transition-colors mb-8 text-sm" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }}>
+          <ArrowLeft size={16} /> Voltar
+        </motion.button>
+
+        <div className="grid md:grid-cols-2 gap-12 items-start">
+
+          <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }}>
+            <div className="relative rounded-2xl overflow-hidden aspect-square bg-[#E8E3CC]">
+              <img src={peixe.imagem_url} alt={peixe.nome} className="w-full h-full object-cover" />
+              {peixe.badge && (
+                <span className="absolute top-4 left-4 bg-[#5B8C7A] text-white text-xs font-medium px-3 py-1 rounded-full">{peixe.badge}</span>
+              )}
+            </div>
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }}>
+            <span className="text-xs font-medium tracking-widest uppercase text-[#9C8A6A] block mb-2">{peixe.categoria}</span>
+            <h1 className="font-serif text-4xl font-light text-[#2C2416] mb-1">{peixe.nome}</h1>
+            <p className="font-serif italic text-[#7A6A52] mb-6">{peixe.nome_cientifico}</p>
+
+            <div className="border-t border-b border-[#D9D2B0] py-6 mb-6">
+              <span className="font-serif text-5xl font-semibold text-[#6B5B3E]">{peixe.preco}</span>
+              <span className="text-[#7A6A52] text-sm ml-2">por unidade</span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 mb-8">
+              <div className="bg-white rounded-xl p-4 flex items-center gap-3">
+                <Thermometer className="text-[#5B8C7A]" size={20} />
+                <div>
+                  <div className="text-xs text-[#7A6A52]">Temperatura</div>
+                  <div className="text-sm font-medium text-[#2C2416]">24 a 28 C</div>
+                </div>
+              </div>
+              <div className="bg-white rounded-xl p-4 flex items-center gap-3">
+                <Droplets className="text-[#5B8C7A]" size={20} />
+                <div>
+                  <div className="text-xs text-[#7A6A52]">pH ideal</div>
+                  <div className="text-sm font-medium text-[#2C2416]">6.5 a 7.5</div>
+                </div>
+              </div>
+              <div className="bg-white rounded-xl p-4 flex items-center gap-3">
+                <Fish className="text-[#5B8C7A]" size={20} />
+                <div>
+                  <div className="text-xs text-[#7A6A52]">Nivel</div>
+                  <div className="text-sm font-medium text-[#2C2416]">Iniciante</div>
+                </div>
+              </div>
+              <div className="bg-white rounded-xl p-4 flex items-center gap-3">
+                <Clock className="text-[#5B8C7A]" size={20} />
+                <div>
+                  <div className="text-xs text-[#7A6A52]">Longevidade</div>
+                  <div className="text-sm font-medium text-[#2C2416]">2 a 5 anos</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <a href={"https://wa.me/5511999999999?text=" + encodeURIComponent(msgWhatsApp)} target="_blank" rel="noreferrer" className="bg-[#25D366] text-white px-6 py-4 rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-[#1ebe5d] transition-colors">
+                <MessageCircle size={20} /> Comprar pelo WhatsApp
+              </a>
+              <a href={"https://wa.me/5511999999999?text=" + encodeURIComponent("Ola! Tenho interesse no " + peixe.nome + " e gostaria de saber mais sobre este peixe.")} target="_blank" rel="noreferrer" className="border border-[#9C8A6A] text-[#6B5B3E] px-6 py-4 rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-[#6B5B3E] hover:text-white transition-colors">
+                <ShoppingCart size={20} /> Adicionar ao pedido
+              </a>
+            </div>
+
+            <p className="text-xs text-[#7A6A52] mt-4 text-center">Entrega para todo o Brasil. Frete calculado no atendimento.</p>
+          </motion.div>
+
+        </div>
+
+      </div>
+      <Footer />
+    </div>
+  )
+}
+
+export default PeixeDetalhe
