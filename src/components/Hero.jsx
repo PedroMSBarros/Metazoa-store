@@ -30,7 +30,7 @@ function Hero() {
             <a href="#destaques" className="bg-[#4A8C1C] text-white px-6 py-3 rounded text-sm font-medium flex items-center gap-2 hover:bg-[#3A6E14] transition-colors">
               Ver catalogo <ArrowRight size={16} />
             </a>
-            <a href="https://wa.me/5511999999999" target="_blank" rel="noreferrer" className="border border-[#C8D4A0]/30 text-[#C8D4A0] px-6 py-3 rounded text-sm font-medium flex items-center gap-2 hover:bg-[#C8D4A0]/10 transition-colors">
+            <a href="https://wa.me/5511971526750" target="_blank" rel="noreferrer" className="border border-[#C8D4A0]/30 text-[#C8D4A0] px-6 py-3 rounded text-sm font-medium flex items-center gap-2 hover:bg-[#C8D4A0]/10 transition-colors">
               <MessageCircle size={16} /> Falar conosco
             </a>
           </motion.div>
