@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { ArrowRight, MessageCircle } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 function Hero() {
   return (
@@ -27,9 +28,9 @@ function Hero() {
           </motion.p>
 
           <motion.div className="flex gap-4 mt-8 flex-wrap" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }}>
-            <a href="#destaques" className="bg-[#4A8C1C] text-white px-6 py-3 rounded text-sm font-medium flex items-center gap-2 hover:bg-[#3A6E14] transition-colors">
+            <Link to="/catalogo" className="bg-[#4A8C1C] text-white px-6 py-3 rounded text-sm font-medium flex items-center gap-2 hover:bg-[#3A6E14] transition-colors">
               Ver catalogo <ArrowRight size={16} />
-            </a>
+            </Link>
             <a href="https://wa.me/5511971526750" target="_blank" rel="noreferrer" className="border border-[#C8D4A0]/30 text-[#C8D4A0] px-6 py-3 rounded text-sm font-medium flex items-center gap-2 hover:bg-[#C8D4A0]/10 transition-colors">
               <MessageCircle size={16} /> Falar conosco
             </a>
