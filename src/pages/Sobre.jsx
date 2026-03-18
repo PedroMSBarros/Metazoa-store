@@ -3,40 +3,39 @@ import Header from '../components/Header'
 import Footer from '../components/Footer'
 
 const valores = [
-  { icon: '🐠', titulo: 'Animais saudaveis', desc: 'Todos os peixes passam por quarentena antes de serem vendidos.' },
-  { icon: '📦', titulo: 'Envio seguro', desc: 'Embalagem especializada para garantir o transporte com seguranca.' },
-  { icon: '💬', titulo: 'Suporte ativo', desc: 'Atendimento rapido e personalizado pelo WhatsApp.' },
-  { icon: '🌿', titulo: 'Sustentavel', desc: 'Trabalhamos com especies criadas em cativeiro.' },
+  { icon: '🐠', titulo: 'Animais saudáveis', desc: 'Todos os peixes passam por quarentena antes de serem vendidos.' },
+  { icon: '📦', titulo: 'Envio seguro', desc: 'Embalagem especializada para garantir o transporte com segurança.' },
+  { icon: '💬', titulo: 'Suporte ativo', desc: 'Atendimento rápido e personalizado pelo WhatsApp.' },
+  { icon: '🌿', titulo: 'Sustentável', desc: 'Trabalhamos com espécies criadas em cativeiro.' },
 ]
 
 function Sobre() {
   return (
     <div className="bg-[#F4F1E1] min-h-screen">
       <Header />
-
       <div className="pt-24 pb-20 px-6 max-w-6xl mx-auto">
 
         <motion.div className="mb-16 text-center" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
           <span className="text-[#5B8C7A] text-sm font-medium tracking-widest uppercase flex items-center gap-2 justify-center">
             <span className="w-7 h-px bg-[#5B8C7A]"></span>
-            Nossa historia
+            Nossa história
             <span className="w-7 h-px bg-[#5B8C7A]"></span>
           </span>
           <h1 className="font-serif text-5xl font-light mt-3 text-[#2C2416]">
-            Paixao por <span className="text-[#5B8C7A] italic">aquarismo</span>
+            Paixão por <span className="text-[#5B8C7A] italic">aquarismo</span>
           </h1>
         </motion.div>
 
         <div className="grid md:grid-cols-2 gap-16 items-center mb-20">
           <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7 }}>
             <p className="text-[#7A6A52] leading-relaxed text-lg mb-4">
-              A Metazoa Store nasceu de uma paixao genuina pelo mundo aquatico. Somos especialistas em aquarismo ornamental, oferecendo peixes saudaveis, plantas vigorosas e todo o suporte necessario para que o seu aquario floresça.
+              A Metazoa Store nasceu de uma paixão genuína pelo mundo aquático. Somos especialistas em aquarismo ornamental, oferecendo peixes saudáveis, plantas vigorosas e todo o suporte necessário para que o seu aquário floresça.
             </p>
             <p className="text-[#7A6A52] leading-relaxed mb-4">
-              Trabalhamos com fornecedores cuidadosamente selecionados e garantimos que cada animal seja enviado com maximo cuidado e seguranca ate a sua casa.
+              Trabalhamos com fornecedores cuidadosamente selecionados e garantimos que cada animal seja enviado com máximo cuidado e segurança até a sua casa.
             </p>
             <p className="text-[#7A6A52] leading-relaxed">
-              Nossa missao e tornar o aquarismo acessivel e prazeroso para todos, desde iniciantes ate aquaristas experientes.
+              Nossa missão é tornar o aquarismo acessível e prazeroso para todos, desde iniciantes até aquaristas experientes.
             </p>
           </motion.div>
 
@@ -59,7 +58,6 @@ function Sobre() {
         </motion.div>
 
       </div>
-
       <Footer />
     </div>
   )

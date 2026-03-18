@@ -1,12 +1,12 @@
 import { motion } from 'framer-motion'
 
 const dicas = [
-  { num: '01', icon: '🌡️', titulo: 'Temperatura da agua', texto: 'Mantenha a temperatura estavel entre 24 e 28 graus para peixes tropicais. Variacoes bruscas causam estresse e doencas.' },
-  { num: '02', icon: '💧', titulo: 'Qualidade da agua', texto: 'Troque 20 a 30% da agua semanalmente. Trate sempre com neutralizador de cloro antes de adicionar ao aquario.' },
-  { num: '03', icon: '⚙️', titulo: 'Filtracao eficiente', texto: 'Use um filtro adequado ao volume do aquario. A filtragem biologica e essencial para controlar amonia e nitritos.' },
-  { num: '04', icon: '💡', titulo: 'Iluminacao correta', texto: '8 a 10 horas de luz por dia para aquarios plantados. Use timer para manter a rotina e evitar o crescimento de algas.' },
-  { num: '05', icon: '🍽️', titulo: 'Alimentacao adequada', texto: 'Alimente 1 a 2 vezes ao dia com racao de qualidade. Ofereça somente o que os peixes consomem em 2 a 3 minutos.' },
-  { num: '06', icon: '🏠', titulo: 'Aclimatacao', texto: 'Ao receber novos peixes, aclimate-os por 30 a 45 minutos flutuando a embalagem no aquario antes de solta-los.' },
+  { num: '01', icon: '🌡️', titulo: 'Temperatura da água', texto: 'Mantenha a temperatura estável entre 24 e 28°C para peixes tropicais. Variações bruscas causam estresse e doenças.' },
+  { num: '02', icon: '💧', titulo: 'Qualidade da água', texto: 'Troque 20 a 30% da água semanalmente. Trate sempre com neutralizador de cloro antes de adicionar ao aquário.' },
+  { num: '03', icon: '⚙️', titulo: 'Filtração eficiente', texto: 'Use um filtro adequado ao volume do aquário. A filtragem biológica é essencial para controlar amônia e nitritos.' },
+  { num: '04', icon: '💡', titulo: 'Iluminação correta', texto: '8 a 10 horas de luz por dia para aquários plantados. Use timer para manter a rotina e evitar o crescimento de algas.' },
+  { num: '05', icon: '🍽️', titulo: 'Alimentação adequada', texto: 'Alimente 1 a 2 vezes ao dia com ração de qualidade. Ofereça somente o que os peixes consomem em 2 a 3 minutos.' },
+  { num: '06', icon: '🏠', titulo: 'Aclimatação', texto: 'Ao receber novos peixes, aclimate-os por 30 a 45 minutos flutuando a embalagem no aquário antes de soltá-los.' },
 ]
 
 function Cuidados() {
@@ -22,7 +22,7 @@ function Cuidados() {
           <h2 className="font-serif text-4xl font-light mt-2 text-[#2C2416]">
             Cuidados <span className="text-[#5B8C7A] italic">essenciais</span>
           </h2>
-          <p className="text-[#7A6A52] mt-2 max-w-md">Dicas para manter seu aquario saudavel e seus peixes felizes.</p>
+          <p className="text-[#7A6A52] mt-2 max-w-md">Dicas para manter seu aquário saudável e seus peixes felizes.</p>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
