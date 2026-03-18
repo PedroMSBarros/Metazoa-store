@@ -7,28 +7,28 @@ const categorias = [
     nome: 'Agua Doce',
     quantidade: '80+ especies',
     filtro: 'Agua Doce',
-    reel: 'https://www.instagram.com/reel/DUszGSBDIjr/embed'
+    video: 'https://streamable.com/e/975ha7'
   },
   {
     icon: '🐡',
     nome: 'Marinhos',
     quantidade: '40+ especies',
     filtro: 'Marinho',
-    reel: 'https://www.instagram.com/reel/DO08Cl9kVx2/embed'
+    video: 'https://streamable.com/e/xpiddv'
   },
   {
     icon: '🌿',
     nome: 'Plantas Aquaticas',
     quantidade: '30+ variedades',
     filtro: 'Plantas',
-    reel: 'https://www.instagram.com/reel/DS2WEiyiIF7/embed'
+    video: 'https://streamable.com/e/fjs3jl'
   },
   {
     icon: '⚙️',
     nome: 'Acessorios',
     quantidade: 'Filtros, luzes e mais',
     filtro: 'Acessorios',
-    reel: 'https://www.instagram.com/reel/DVetCQdFX7T/embed'
+    video: 'https://streamable.com/e/teo88g'
   },
 ]
 
@@ -54,14 +54,14 @@ function Categorias() {
               <Link to={"/catalogo?categoria=" + cat.filtro} className="relative rounded-xl overflow-hidden block group cursor-pointer">
                 <div className="relative aspect-[3/4] bg-[#1A1A1A] overflow-hidden rounded-xl">
                   <iframe
-                    src={cat.reel}
-                    className="absolute inset-0 w-full h-full scale-[1.02] pointer-events-none"
+                    src={cat.video + "?autoplay=1&muted=1&loop=1&controls=0&nocontrols=1"}
+                    className="absolute inset-0 w-full h-full scale-[1.5] pointer-events-none"
                     frameBorder="0"
-                    scrolling="no"
-                    allowTransparency="true"
+                    allow="autoplay; fullscreen"
+                    allowFullScreen
                     title={cat.nome}
                   ></iframe>
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#14231e]/90 via-[#14231e]/20 to-transparent rounded-xl group-hover:from-[#14231e]/95 transition-all duration-300"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#14231e]/90 via-[#14231e]/10 to-transparent rounded-xl group-hover:from-[#14231e]/95 transition-all duration-300"></div>
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
                   <span className="text-2xl block mb-1">{cat.icon}</span>
