@@ -7,28 +7,32 @@ const categorias = [
     nome: 'Agua Doce',
     quantidade: '80+ especies',
     filtro: 'Agua Doce',
-    video: 'https://streamable.com/e/975ha7'
+    video: 'https://streamable.com/e/975ha7',
+    img: 'https://i.postimg.cc/jjrG917Y/doce.png'
   },
   {
     icon: '🐡',
     nome: 'Marinhos',
     quantidade: '40+ especies',
     filtro: 'Marinho',
-    video: 'https://streamable.com/e/xpiddv'
+    video: 'https://streamable.com/e/xpiddv',
+    img: 'https://i.postimg.cc/bJmWZNVx/marin.png'
   },
   {
     icon: '🌿',
     nome: 'Plantas Aquaticas',
     quantidade: '30+ variedades',
     filtro: 'Plantas',
-    video: 'https://streamable.com/e/fjs3jl'
+    video: 'https://streamable.com/e/fjs3jl',
+    img: 'https://i.postimg.cc/HWPFHny7/plantas.png'
   },
   {
     icon: '⚙️',
     nome: 'Acessorios',
     quantidade: 'Filtros, luzes e mais',
     filtro: 'Acessorios',
-    video: 'https://streamable.com/e/teo88g'
+    video: 'https://streamable.com/e/teo88g',
+    img: 'https://i.postimg.cc/hvwY0ZB9/equip.png'
   },
 ]
 
@@ -53,14 +57,20 @@ function Categorias() {
             <motion.div key={cat.nome} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.1 }}>
               <Link to={"/catalogo?categoria=" + cat.filtro} className="relative rounded-xl overflow-hidden block group cursor-pointer">
                 <div className="relative aspect-[3/4] bg-[#1A1A1A] overflow-hidden rounded-xl">
+
+                  {/* Imagem para celular */}
+                  <img src={cat.img} alt={cat.nome} className="absolute inset-0 w-full h-full object-cover md:hidden" />
+
+                  {/* Video para desktop */}
                   <iframe
                     src={cat.video + "?autoplay=1&muted=1&loop=1&controls=0&nocontrols=1"}
-                    className="absolute inset-0 w-full h-full scale-[1.5] pointer-events-none"
+                    className="absolute inset-0 w-full h-full scale-[1.5] pointer-events-none hidden md:block"
                     frameBorder="0"
                     allow="autoplay; fullscreen"
                     allowFullScreen
                     title={cat.nome}
                   ></iframe>
+
                   <div className="absolute inset-0 bg-gradient-to-t from-[#14231e]/90 via-[#14231e]/10 to-transparent rounded-xl group-hover:from-[#14231e]/95 transition-all duration-300"></div>
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
