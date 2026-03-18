@@ -1,10 +1,35 @@
 import { motion } from 'framer-motion'
+import { Link } from 'react-router-dom'
 
 const categorias = [
-  { icon: '🐟', nome: 'Agua Doce', quantidade: '80+ especies', img: 'https://images.unsplash.com/photo-1571752726703-5e7d1f6a986d?w=600&q=80' },
-  { icon: '🐡', nome: 'Marinhos', quantidade: '40+ especies', img: 'https://images.unsplash.com/photo-1535591273668-578e31182c4f?w=600&q=80' },
-  { icon: '🌿', nome: 'Plantas Aquaticas', quantidade: '30+ variedades', img: 'https://images.unsplash.com/photo-1585858229735-cd08d8cb510d?w=600&q=80' },
-  { icon: '⚙️', nome: 'Acessorios', quantidade: 'Filtros, luzes e mais', img: 'https://images.unsplash.com/photo-1590677197631-b9501d643de5?w=600&q=80' },
+  {
+    icon: '🐟',
+    nome: 'Agua Doce',
+    quantidade: '80+ especies',
+    filtro: 'Agua Doce',
+    reel: 'https://www.instagram.com/reel/DUszGSBDIjr/embed'
+  },
+  {
+    icon: '🐡',
+    nome: 'Marinhos',
+    quantidade: '40+ especies',
+    filtro: 'Marinho',
+    reel: 'https://www.instagram.com/reel/DO08Cl9kVx2/embed'
+  },
+  {
+    icon: '🌿',
+    nome: 'Plantas Aquaticas',
+    quantidade: '30+ variedades',
+    filtro: 'Plantas',
+    reel: 'https://www.instagram.com/reel/DS2WEiyiIF7/embed'
+  },
+  {
+    icon: '⚙️',
+    nome: 'Acessorios',
+    quantidade: 'Filtros, luzes e mais',
+    filtro: 'Acessorios',
+    reel: 'https://www.instagram.com/reel/DVetCQdFX7T/embed'
+  },
 ]
 
 function Categorias() {
@@ -25,15 +50,26 @@ function Categorias() {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {categorias.map((cat, i) => (
-            <motion.a key={cat.nome} href="#destaques" className="relative rounded-xl overflow-hidden aspect-[3/4] block group cursor-pointer" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.1 }}>
-              <img src={cat.img} alt={cat.nome} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#14231e]/85 via-[#14231e]/20 to-transparent"></div>
-              <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                <span className="text-2xl block mb-1">{cat.icon}</span>
-                <span className="font-serif text-lg block">{cat.nome}</span>
-                <span className="text-xs opacity-70">{cat.quantidade}</span>
-              </div>
-            </motion.a>
+            <motion.div key={cat.nome} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.1 }}>
+              <Link to={"/catalogo?categoria=" + cat.filtro} className="relative rounded-xl overflow-hidden block group cursor-pointer">
+                <div className="relative aspect-[3/4] bg-[#1A1A1A] overflow-hidden rounded-xl">
+                  <iframe
+                    src={cat.reel}
+                    className="absolute inset-0 w-full h-full scale-[1.02] pointer-events-none"
+                    frameBorder="0"
+                    scrolling="no"
+                    allowTransparency="true"
+                    title={cat.nome}
+                  ></iframe>
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#14231e]/90 via-[#14231e]/20 to-transparent rounded-xl group-hover:from-[#14231e]/95 transition-all duration-300"></div>
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                  <span className="text-2xl block mb-1">{cat.icon}</span>
+                  <span className="font-serif text-lg block">{cat.nome}</span>
+                  <span className="text-xs opacity-70">{cat.quantidade}</span>
+                </div>
+              </Link>
+            </motion.div>
           ))}
         </div>
 

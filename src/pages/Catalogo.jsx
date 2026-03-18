@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Loader, Search, X } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { supabase } from '../lib/supabase'
@@ -31,6 +31,17 @@ function Catalogo() {
   const [filtro, setFiltro] = useState('Todos')
   const [mostrarAguaDoce, setMostrarAguaDoce] = useState(false)
   const [busca, setBusca] = useState('')
+  const [searchParams] = useSearchParams()
+
+  useEffect(() => {
+    const categoriaParam = searchParams.get('categoria')
+    if (categoriaParam) {
+      setFiltro(categoriaParam)
+      if (aguaDoceValues.includes(categoriaParam)) {
+        setMostrarAguaDoce(true)
+      }
+    }
+  }, [searchParams])
 
   useEffect(() => {
     async function buscarPeixes() {
@@ -81,13 +92,7 @@ function Catalogo() {
 
         <motion.div className="relative mb-8" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 }}>
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#9C8A6A]" size={18} />
-          <input
-            type="text"
-            placeholder="Buscar peixe, especie ou categoria..."
-            value={busca}
-            onChange={e => setBusca(e.target.value)}
-            className="w-full bg-white border border-[#D9D2B0] rounded-xl pl-11 pr-10 py-3 text-sm text-[#2C2416] placeholder-[#9C8A6A] focus:outline-none focus:border-[#5B8C7A] transition-colors"
-          />
+          <input type="text" placeholder="Buscar peixe, especie ou categoria..." value={busca} onChange={e => setBusca(e.target.value)} className="w-full bg-white border border-[#D9D2B0] rounded-xl pl-11 pr-10 py-3 text-sm text-[#2C2416] placeholder-[#9C8A6A] focus:outline-none focus:border-[#5B8C7A] transition-colors" />
           {busca && (
             <button onClick={() => setBusca('')} className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9C8A6A] hover:text-[#2C2416] transition-colors">
               <X size={16} />
@@ -131,8 +136,8 @@ function Catalogo() {
         ) : peixesFiltrados.length === 0 ? (
           <div className="text-center py-20">
             <div className="text-5xl mb-4">🐠</div>
-            <p className="text-[#7A6A52] text-lg">Nenhum peixe encontrado para "{busca}"</p>
-            <button onClick={() => setBusca('')} className="mt-4 text-[#5B8C7A] underline text-sm">Limpar busca</button>
+            <p className="text-[#7A6A52] text-lg">Nenhum resultado encontrado</p>
+            <button onClick={() => { setBusca(''); setFiltro('Todos') }} className="mt-4 text-[#5B8C7A] underline text-sm">Limpar filtros</button>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
