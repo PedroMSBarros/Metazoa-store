@@ -6,11 +6,9 @@ import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { supabase } from '../lib/supabase'
 
-const categorias = [
-  { label: 'Todos', value: 'Todos' },
+const categoriasPeixes = [
   { label: 'Marinho', value: 'Marinho' },
   { label: 'Plantas', value: 'Plantas' },
-  { label: 'Acessorios', value: 'Acessorios' },
 ]
 
 const subcategorias = [
@@ -23,10 +21,17 @@ const subcategorias = [
   { label: 'Ciclídeos Africanos', value: 'Ciclideos Africanos' },
 ]
 
+const categoriasProdutos = [
+  { label: 'Acessorios', value: 'Acessorios' },
+  { label: 'Outros', value: 'Outros' },
+]
+
 const aguaDoceValues = ['Agua Doce', 'Primitivos', 'Amazonicos', 'Variados', 'Jumbos', 'Cascudos', 'Ciclideos Africanos']
+const produtosValues = ['Acessorios', 'Outros']
 
 function Catalogo() {
   const [peixes, setPeixes] = useState([])
+  const [produtos, setProdutos] = useState([])
   const [carregando, setCarregando] = useState(true)
   const [filtro, setFiltro] = useState('Todos')
   const [mostrarAguaDoce, setMostrarAguaDoce] = useState(false)
@@ -37,42 +42,48 @@ function Catalogo() {
     const categoriaParam = searchParams.get('categoria')
     if (categoriaParam) {
       setFiltro(categoriaParam)
-      if (aguaDoceValues.includes(categoriaParam)) {
-        setMostrarAguaDoce(true)
-      }
+      if (aguaDoceValues.includes(categoriaParam)) setMostrarAguaDoce(true)
     }
   }, [searchParams])
 
   useEffect(() => {
-    async function buscarPeixes() {
-      const { data, error } = await supabase.from('peixes').select('*')
-      if (!error) setPeixes(data)
+    async function buscarTudo() {
+      const [{ data: dataPeixes }, { data: dataProdutos }] = await Promise.all([
+        supabase.from('peixes').select('*'),
+        supabase.from('produtos').select('*')
+      ])
+      if (dataPeixes) setPeixes(dataPeixes)
+      if (dataProdutos) setProdutos(dataProdutos)
       setCarregando(false)
     }
-    buscarPeixes()
+    buscarTudo()
   }, [])
 
-  const peixesFiltrados = peixes
-    .filter(p => {
+  const todosItens = [
+    ...peixes.map(p => ({ ...p, _tipo: 'peixe' })),
+    ...produtos.map(p => ({ ...p, _tipo: 'produto' }))
+  ]
+
+  const itensFiltrados = todosItens
+    .filter(item => {
       if (filtro === 'Todos') return true
-      if (filtro === 'Agua Doce') return aguaDoceValues.includes(p.categoria)
-      return p.categoria === filtro
+      if (filtro === 'Agua Doce') return aguaDoceValues.includes(item.categoria)
+      return item.categoria === filtro
     })
-    .filter(p => {
+    .filter(item => {
       if (!busca) return true
       const termo = busca.toLowerCase()
       return (
-        p.nome?.toLowerCase().includes(termo) ||
-        p.nome_cientifico?.toLowerCase().includes(termo) ||
-        p.categoria?.toLowerCase().includes(termo)
+        item.nome?.toLowerCase().includes(termo) ||
+        item.nome_cientifico?.toLowerCase().includes(termo) ||
+        item.descricao?.toLowerCase().includes(termo) ||
+        item.categoria?.toLowerCase().includes(termo)
       )
     })
 
   function handleFiltro(value) {
     setFiltro(value)
-    if (!aguaDoceValues.includes(value) && value !== 'Agua Doce') {
-      setMostrarAguaDoce(false)
-    }
+    if (!aguaDoceValues.includes(value) && value !== 'Agua Doce') setMostrarAguaDoce(false)
   }
 
   return (
@@ -86,13 +97,13 @@ function Catalogo() {
             Catalogo completo
           </span>
           <h1 className="font-serif text-4xl font-light mt-2 text-[#2C2416]">
-            Nossos <span className="text-[#5B8C7A] italic">peixes</span>
+            Nossos <span className="text-[#5B8C7A] italic">produtos</span>
           </h1>
         </motion.div>
 
         <motion.div className="relative mb-8" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 }}>
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#9C8A6A]" size={18} />
-          <input type="text" placeholder="Buscar peixe, especie ou categoria..." value={busca} onChange={e => setBusca(e.target.value)} className="w-full bg-white border border-[#D9D2B0] rounded-xl pl-11 pr-10 py-3 text-sm text-[#2C2416] placeholder-[#9C8A6A] focus:outline-none focus:border-[#5B8C7A] transition-colors" />
+          <input type="text" placeholder="Buscar peixe, produto ou categoria..." value={busca} onChange={e => setBusca(e.target.value)} className="w-full bg-white border border-[#D9D2B0] rounded-xl pl-11 pr-10 py-3 text-sm text-[#2C2416] placeholder-[#9C8A6A] focus:outline-none focus:border-[#5B8C7A] transition-colors" />
           {busca && (
             <button onClick={() => setBusca('')} className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9C8A6A] hover:text-[#2C2416] transition-colors">
               <X size={16} />
@@ -102,14 +113,23 @@ function Catalogo() {
 
         <div className="mb-8">
           <div className="flex gap-3 flex-wrap">
-            {categorias.map(cat => (
-              <button key={cat.value} onClick={() => { handleFiltro(cat.value); setMostrarAguaDoce(false) }} className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${filtro === cat.value ? 'bg-[#5B8C7A] text-white' : 'bg-white text-[#6B5B3E] hover:bg-[#5B8C7A] hover:text-white'}`}>
-                {cat.label}
-              </button>
-            ))}
+            <button onClick={() => { handleFiltro('Todos'); setMostrarAguaDoce(false) }} className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${filtro === 'Todos' ? 'bg-[#5B8C7A] text-white' : 'bg-white text-[#6B5B3E] hover:bg-[#5B8C7A] hover:text-white'}`}>
+              Todos
+            </button>
             <button onClick={() => { setMostrarAguaDoce(!mostrarAguaDoce); handleFiltro('Agua Doce') }} className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${aguaDoceValues.includes(filtro) ? 'bg-[#5B8C7A] text-white' : 'bg-white text-[#6B5B3E] hover:bg-[#5B8C7A] hover:text-white'}`}>
               Agua Doce ▾
             </button>
+            {categoriasPeixes.map(cat => (
+              <button key={cat.value} onClick={() => handleFiltro(cat.value)} className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${filtro === cat.value ? 'bg-[#5B8C7A] text-white' : 'bg-white text-[#6B5B3E] hover:bg-[#5B8C7A] hover:text-white'}`}>
+                {cat.label}
+              </button>
+            ))}
+            <span className="w-px bg-[#D9D2B0] self-stretch"></span>
+            {categoriasProdutos.map(cat => (
+              <button key={cat.value} onClick={() => handleFiltro(cat.value)} className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${filtro === cat.value ? 'bg-[#6B5B3E] text-white' : 'bg-white text-[#6B5B3E] hover:bg-[#6B5B3E] hover:text-white'}`}>
+                {cat.label}
+              </button>
+            ))}
           </div>
 
           {mostrarAguaDoce && (
@@ -125,7 +145,7 @@ function Catalogo() {
 
         {busca && (
           <p className="text-sm text-[#7A6A52] mb-6">
-            {peixesFiltrados.length} resultado{peixesFiltrados.length !== 1 ? 's' : ''} para <span className="font-medium text-[#2C2416]">"{busca}"</span>
+            {itensFiltrados.length} resultado{itensFiltrados.length !== 1 ? 's' : ''} para <span className="font-medium text-[#2C2416]">"{busca}"</span>
           </p>
         )}
 
@@ -133,7 +153,7 @@ function Catalogo() {
           <div className="flex justify-center items-center py-20">
             <Loader className="animate-spin text-[#5B8C7A]" size={32} />
           </div>
-        ) : peixesFiltrados.length === 0 ? (
+        ) : itensFiltrados.length === 0 ? (
           <div className="text-center py-20">
             <div className="text-5xl mb-4">🐠</div>
             <p className="text-[#7A6A52] text-lg">Nenhum resultado encontrado</p>
@@ -141,21 +161,22 @@ function Catalogo() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {peixesFiltrados.map((peixe, i) => (
-              <motion.div key={peixe.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: i * 0.03 }}>
-                <Link to={"/peixe/" + peixe.id} className="bg-white rounded-xl overflow-hidden hover:-translate-y-1 transition-transform duration-300 shadow-sm hover:shadow-md block">
+            {itensFiltrados.map((item, i) => (
+              <motion.div key={item.id + item._tipo} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: i * 0.03 }}>
+                <Link to={"/" + item._tipo + "/" + item.id} className="bg-white rounded-xl overflow-hidden hover:-translate-y-1 transition-transform duration-300 shadow-sm hover:shadow-md block">
                   <div className="relative aspect-[4/3] overflow-hidden bg-[#E8E3CC]">
-                    <img src={peixe.imagem_url} alt={peixe.nome} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
-                    {peixe.badge && (
-                      <span className="absolute top-3 left-3 bg-[#5B8C7A] text-white text-xs font-medium px-3 py-1 rounded-full">{peixe.badge}</span>
+                    <img src={item.imagem_url} alt={item.nome} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                    {item.badge && (
+                      <span className="absolute top-3 left-3 bg-[#5B8C7A] text-white text-xs font-medium px-3 py-1 rounded-full">{item.badge}</span>
                     )}
                   </div>
                   <div className="p-5">
-                    <span className="text-xs font-medium tracking-widest uppercase text-[#9C8A6A] block mb-1">{peixe.categoria}</span>
-                    <div className="font-serif text-xl text-[#2C2416] mb-1">{peixe.nome}</div>
-                    <span className="font-serif italic text-sm text-[#7A6A52] block mb-3">{peixe.nome_cientifico}</span>
+                    <span className="text-xs font-medium tracking-widest uppercase text-[#9C8A6A] block mb-1">{item.categoria}</span>
+                    <div className="font-serif text-xl text-[#2C2416] mb-1">{item.nome}</div>
+                    {item.nome_cientifico && <span className="font-serif italic text-sm text-[#7A6A52] block mb-3">{item.nome_cientifico}</span>}
+                    {item.descricao && <span className="text-sm text-[#7A6A52] block mb-3 line-clamp-2">{item.descricao}</span>}
                     <div className="flex justify-between items-center pt-3 border-t border-[#E8E3CC]">
-                      <span className="font-serif text-2xl font-semibold text-[#6B5B3E]">{peixe.preco}</span>
+                      <span className="font-serif text-2xl font-semibold text-[#6B5B3E]">{item.preco}</span>
                       <span className="bg-[#5B8C7A] text-white text-sm px-4 py-2 rounded">Ver detalhes</span>
                     </div>
                   </div>

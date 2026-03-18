@@ -4,6 +4,7 @@ import Catalogo from './pages/Catalogo'
 import Sobre from './pages/Sobre'
 import Cuidados from './pages/Cuidados'
 import PeixeDetalhe from './pages/PeixeDetalhe'
+import ProdutoDetalhe from './pages/ProdutoDetalhe'
 import WhatsAppFloat from './components/WhatsAppFloat'
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
         <Route path="/sobre" element={<Sobre />} />
         <Route path="/cuidados" element={<Cuidados />} />
         <Route path="/peixe/:id" element={<PeixeDetalhe />} />
+        <Route path="/produto/:id" element={<ProdutoDetalhe />} />
       </Routes>
       <WhatsAppFloat />
     </>
