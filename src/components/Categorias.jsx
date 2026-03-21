@@ -4,34 +4,34 @@ import { Link } from 'react-router-dom'
 const categorias = [
   {
     icon: '🐟',
-    nome: 'Agua Doce',
-    quantidade: '80+ especies',
+    nome: 'Água Doce',
+    quantidade: '80+ espécies',
     filtro: 'Agua Doce',
-    video: 'https://streamable.com/e/975ha7',
+    video: 'https://streamable.com/e/l7hyob',
     img: 'https://i.postimg.cc/jjrG917Y/doce.png'
   },
   {
     icon: '🐡',
     nome: 'Marinhos',
-    quantidade: '40+ especies',
+    quantidade: '40+ espécies',
     filtro: 'Marinho',
-    video: 'https://streamable.com/e/xpiddv',
+    video: 'https://streamable.com/e/7ravz4',
     img: 'https://i.postimg.cc/bJmWZNVx/marin.png'
   },
   {
     icon: '🌿',
-    nome: 'Plantas Aquaticas',
+    nome: 'Plantas Aquáticas',
     quantidade: '30+ variedades',
     filtro: 'Plantas',
-    video: 'https://streamable.com/e/fjs3jl',
+    video: 'https://streamable.com/e/xxjmoa',
     img: 'https://i.postimg.cc/HWPFHny7/plantas.png'
   },
   {
     icon: '⚙️',
-    nome: 'Acessorios',
+    nome: 'Acessórios',
     quantidade: 'Filtros, luzes e mais',
     filtro: 'Acessorios',
-    video: 'https://streamable.com/e/teo88g',
+    video: 'https://streamable.com/e/q9yrh6',
     img: 'https://i.postimg.cc/hvwY0ZB9/equip.png'
   },
 ]
@@ -49,7 +49,7 @@ function Categorias() {
           <h2 className="font-serif text-4xl font-light mt-2 text-[#2C2416]">
             Nossas <span className="text-[#5B8C7A] italic">categorias</span>
           </h2>
-          <p className="text-[#7A6A52] mt-2 max-w-md">Do doce ao salgado, temos tudo que o seu aquario precisa.</p>
+          <p className="text-[#7A6A52] mt-2 max-w-md">Do doce ao salgado, temos tudo que o seu aquário precisa.</p>
         </motion.div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -57,11 +57,7 @@ function Categorias() {
             <motion.div key={cat.nome} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.1 }}>
               <Link to={"/catalogo?categoria=" + cat.filtro} className="relative rounded-xl overflow-hidden block group cursor-pointer">
                 <div className="relative aspect-[3/4] bg-[#1A1A1A] overflow-hidden rounded-xl">
-
-                  {/* Imagem para celular */}
                   <img src={cat.img} alt={cat.nome} className="absolute inset-0 w-full h-full object-cover md:hidden" />
-
-                  {/* Video para desktop */}
                   <iframe
                     src={cat.video + "?autoplay=1&muted=1&loop=1&controls=0&nocontrols=1"}
                     className="absolute inset-0 w-full h-full scale-[1.5] pointer-events-none hidden md:block"
@@ -70,7 +66,6 @@ function Categorias() {
                     allowFullScreen
                     title={cat.nome}
                   ></iframe>
-
                   <div className="absolute inset-0 bg-gradient-to-t from-[#14231e]/90 via-[#14231e]/10 to-transparent rounded-xl group-hover:from-[#14231e]/95 transition-all duration-300"></div>
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
