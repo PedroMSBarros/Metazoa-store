@@ -7,7 +7,7 @@ const categorias = [
     nome: 'Água Doce',
     quantidade: '80+ espécies',
     filtro: 'Agua Doce',
-    video: 'https://streamable.com/e/l7hyob',
+    video: 'https://www.youtube.com/embed/lw-SPFj9axc?autoplay=1&mute=1&loop=1&playlist=lw-SPFj9axc&controls=0&playsinline=1',
     img: 'https://i.postimg.cc/jjrG917Y/doce.png'
   },
   {
@@ -15,7 +15,7 @@ const categorias = [
     nome: 'Marinhos',
     quantidade: '40+ espécies',
     filtro: 'Marinho',
-    video: 'https://streamable.com/e/7ravz4',
+    video: 'https://www.youtube.com/embed/GquWlTFa9HE?autoplay=1&mute=1&loop=1&playlist=GquWlTFa9HE&controls=0&playsinline=1',
     img: 'https://i.postimg.cc/bJmWZNVx/marin.png'
   },
   {
@@ -23,7 +23,7 @@ const categorias = [
     nome: 'Plantas Aquáticas',
     quantidade: '30+ variedades',
     filtro: 'Plantas',
-    video: 'https://streamable.com/e/xxjmoa',
+    video: 'https://www.youtube.com/embed/F9uaykVcXhQ?autoplay=1&mute=1&loop=1&playlist=F9uaykVcXhQ&controls=0&playsinline=1',
     img: 'https://i.postimg.cc/HWPFHny7/plantas.png'
   },
   {
@@ -31,7 +31,7 @@ const categorias = [
     nome: 'Acessórios',
     quantidade: 'Filtros, luzes e mais',
     filtro: 'Acessorios',
-    video: 'https://streamable.com/e/q9yrh6',
+    video: 'https://www.youtube.com/embed/ySY_FhzPi14?autoplay=1&mute=1&loop=1&playlist=ySY_FhzPi14&controls=0&playsinline=1',
     img: 'https://i.postimg.cc/hvwY0ZB9/equip.png'
   },
 ]
@@ -59,10 +59,10 @@ function Categorias() {
                 <div className="relative aspect-[3/4] bg-[#1A1A1A] overflow-hidden rounded-xl">
                   <img src={cat.img} alt={cat.nome} className="absolute inset-0 w-full h-full object-cover md:hidden" />
                   <iframe
-                    src={cat.video + "?autoplay=1&muted=1&loop=1&controls=0&nocontrols=1"}
+                    src={cat.video}
                     className="absolute inset-0 w-full h-full scale-[1.5] pointer-events-none hidden md:block"
                     frameBorder="0"
-                    allow="autoplay; fullscreen"
+                    allow="autoplay; mute; loop; fullscreen"
                     allowFullScreen
                     title={cat.nome}
                   ></iframe>
