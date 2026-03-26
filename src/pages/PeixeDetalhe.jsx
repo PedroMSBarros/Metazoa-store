@@ -52,6 +52,15 @@ function PeixeDetalhe() {
 
   const msgWhatsApp = "Olá! Vim pelo site e tenho interesse no " + peixe.nome + " (" + peixe.preco + "). Poderia me passar mais informações?"
 
+  const infos = [
+    { icon: Thermometer, label: 'Temperatura', valor: peixe.temperatura },
+    { icon: Droplets, label: 'pH ideal', valor: peixe.ph },
+    { icon: Fish, label: 'Nível', valor: peixe.nivel },
+    { icon: Clock, label: 'Longevidade', valor: peixe.longevidade },
+  ]
+
+  const infosVisiveis = infos.filter(i => i.valor)
+
   return (
     <div className="bg-[#F4F1E1] min-h-screen">
       <Header />
@@ -83,36 +92,19 @@ function PeixeDetalhe() {
               <span className="text-[#7A6A52] text-sm ml-2">por unidade</span>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 mb-8">
-              <div className="bg-white rounded-xl p-4 flex items-center gap-3">
-                <Thermometer className="text-[#5B8C7A]" size={20} />
-                <div>
-                  <div className="text-xs text-[#7A6A52]">Temperatura</div>
-                  <div className="text-sm font-medium text-[#2C2416]">24 a 28°C</div>
-                </div>
+            {infosVisiveis.length > 0 && (
+              <div className={`grid grid-cols-2 gap-3 mb-8`}>
+                {infosVisiveis.map(({ icon: Icon, label, valor }) => (
+                  <div key={label} className="bg-white rounded-xl p-4 flex items-center gap-3">
+                    <Icon className="text-[#5B8C7A] flex-shrink-0" size={20} />
+                    <div>
+                      <div className="text-xs text-[#7A6A52]">{label}</div>
+                      <div className="text-sm font-medium text-[#2C2416]">{valor}</div>
+                    </div>
+                  </div>
+                ))}
               </div>
-              <div className="bg-white rounded-xl p-4 flex items-center gap-3">
-                <Droplets className="text-[#5B8C7A]" size={20} />
-                <div>
-                  <div className="text-xs text-[#7A6A52]">pH ideal</div>
-                  <div className="text-sm font-medium text-[#2C2416]">6.5 a 7.5</div>
-                </div>
-              </div>
-              <div className="bg-white rounded-xl p-4 flex items-center gap-3">
-                <Fish className="text-[#5B8C7A]" size={20} />
-                <div>
-                  <div className="text-xs text-[#7A6A52]">Nível</div>
-                  <div className="text-sm font-medium text-[#2C2416]">Iniciante</div>
-                </div>
-              </div>
-              <div className="bg-white rounded-xl p-4 flex items-center gap-3">
-                <Clock className="text-[#5B8C7A]" size={20} />
-                <div>
-                  <div className="text-xs text-[#7A6A52]">Longevidade</div>
-                  <div className="text-sm font-medium text-[#2C2416]">2 a 5 anos</div>
-                </div>
-              </div>
-            </div>
+            )}
 
             <div className="flex flex-col gap-3">
               <button onClick={handleAdicionarCarrinho} className={`px-6 py-4 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors ${adicionado ? 'bg-[#4A8C1C] text-white' : 'bg-[#6B5B3E] text-white hover:bg-[#2C2416]'}`}>
