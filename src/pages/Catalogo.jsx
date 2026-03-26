@@ -49,8 +49,8 @@ function Catalogo() {
   useEffect(() => {
     async function buscarTudo() {
       const [{ data: dataPeixes }, { data: dataProdutos }] = await Promise.all([
-        supabase.from('peixes').select('*'),
-        supabase.from('produtos').select('*')
+        supabase.from('peixes').select('*').order('nome'),
+        supabase.from('produtos').select('*').order('nome')
       ])
       if (dataPeixes) setPeixes(dataPeixes)
       if (dataProdutos) setProdutos(dataProdutos)
