@@ -5,12 +5,15 @@ import { ArrowLeft, MessageCircle, ShoppingCart, Thermometer, Droplets, Fish, Cl
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { supabase } from '../lib/supabase'
+import { useCart } from '../components/CartContext'
 
 function PeixeDetalhe() {
   const { id } = useParams()
   const navigate = useNavigate()
   const [peixe, setPeixe] = useState(null)
   const [carregando, setCarregando] = useState(true)
+  const [adicionado, setAdicionado] = useState(false)
+  const { adicionarItem } = useCart()
 
   useEffect(() => {
     async function buscarPeixe() {
@@ -20,6 +23,12 @@ function PeixeDetalhe() {
     }
     buscarPeixe()
   }, [id])
+
+  function handleAdicionarCarrinho() {
+    adicionarItem({ ...peixe, _tipo: 'peixe' })
+    setAdicionado(true)
+    setTimeout(() => setAdicionado(false), 2000)
+  }
 
   if (carregando) {
     return (
@@ -34,14 +43,14 @@ function PeixeDetalhe() {
       <div className="min-h-screen bg-[#F4F1E1] flex items-center justify-center">
         <div className="text-center">
           <div className="text-5xl mb-4">🐠</div>
-          <p className="text-[#7A6A52]">Peixe nao encontrado.</p>
-          <button onClick={() => navigate('/catalogo')} className="mt-4 text-[#5B8C7A] underline">Voltar ao catalogo</button>
+          <p className="text-[#7A6A52]">Peixe não encontrado.</p>
+          <button onClick={() => navigate('/catalogo')} className="mt-4 text-[#5B8C7A] underline">Voltar ao catálogo</button>
         </div>
       </div>
     )
   }
 
-  const msgWhatsApp = "Ola! Vim pelo site e tenho interesse no " + peixe.nome + " (" + peixe.preco + "). Poderia me passar mais informacoes?"
+  const msgWhatsApp = "Olá! Vim pelo site e tenho interesse no " + peixe.nome + " (" + peixe.preco + "). Poderia me passar mais informações?"
 
   return (
     <div className="bg-[#F4F1E1] min-h-screen">
@@ -79,7 +88,7 @@ function PeixeDetalhe() {
                 <Thermometer className="text-[#5B8C7A]" size={20} />
                 <div>
                   <div className="text-xs text-[#7A6A52]">Temperatura</div>
-                  <div className="text-sm font-medium text-[#2C2416]">24 a 28 C</div>
+                  <div className="text-sm font-medium text-[#2C2416]">24 a 28°C</div>
                 </div>
               </div>
               <div className="bg-white rounded-xl p-4 flex items-center gap-3">
@@ -92,7 +101,7 @@ function PeixeDetalhe() {
               <div className="bg-white rounded-xl p-4 flex items-center gap-3">
                 <Fish className="text-[#5B8C7A]" size={20} />
                 <div>
-                  <div className="text-xs text-[#7A6A52]">Nivel</div>
+                  <div className="text-xs text-[#7A6A52]">Nível</div>
                   <div className="text-sm font-medium text-[#2C2416]">Iniciante</div>
                 </div>
               </div>
@@ -106,11 +115,12 @@ function PeixeDetalhe() {
             </div>
 
             <div className="flex flex-col gap-3">
-              <a href={"https://wa.me/5511971526750?text=" + encodeURIComponent(msgWhatsApp)} target="_blank" rel="noreferrer" className="bg-[#25D366] text-white px-6 py-4 rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-[#1ebe5d] transition-colors">
-                <MessageCircle size={20} /> Comprar pelo WhatsApp
-              </a>
-              <a href={"https://wa.me/5511971526750?text=" + encodeURIComponent("Ola! Tenho interesse no " + peixe.nome + " e gostaria de saber mais sobre este peixe.")} target="_blank" rel="noreferrer" className="border border-[#9C8A6A] text-[#6B5B3E] px-6 py-4 rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-[#6B5B3E] hover:text-white transition-colors">
-                <ShoppingCart size={20} /> Adicionar ao pedido
+              <button onClick={handleAdicionarCarrinho} className={`px-6 py-4 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors ${adicionado ? 'bg-[#4A8C1C] text-white' : 'bg-[#6B5B3E] text-white hover:bg-[#2C2416]'}`}>
+                <ShoppingCart size={20} />
+                {adicionado ? '✓ Adicionado ao carrinho!' : 'Adicionar ao carrinho'}
+              </button>
+              <a href={"https://wa.me/5511971526750?text=" + encodeURIComponent(msgWhatsApp)} target="_blank" rel="noreferrer" className="border border-[#9C8A6A] text-[#6B5B3E] px-6 py-4 rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-[#6B5B3E] hover:text-white transition-colors">
+                <MessageCircle size={20} /> Consultar pelo WhatsApp
               </a>
             </div>
 
