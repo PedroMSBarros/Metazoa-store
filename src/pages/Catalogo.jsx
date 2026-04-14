@@ -100,7 +100,7 @@ function Catalogo() {
           </h1>
         </motion.div>
 
-        <motion.div className="relative mb-8" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+        <motion.div className="relative mb-8" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ pointerEvents: 'auto' }}>
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#9C8A6A] pointer-events-none" size={18} />
           <input type="search" inputMode="search" autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false" placeholder="Buscar por nome, espécie ou categoria..." value={busca} onChange={e => setBusca(e.target.value)} className="w-full pl-11 pr-10 py-3 rounded-xl border border-[#D9D2B0] bg-white text-[#2C2416] placeholder-[#9C8A6A] focus:outline-none focus:ring-2 focus:ring-[#5B8C7A]" />
           {busca && (
