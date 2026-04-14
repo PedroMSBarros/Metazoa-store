@@ -6,7 +6,7 @@ const categorias = [
     icon: '🐟',
     nome: 'Água Doce',
     quantidade: '80+ espécies',
-    filtro: 'Agua Doce',
+    filtro: 'Água Doce',
     video: 'https://www.youtube.com/embed/lw-SPFj9axc?autoplay=1&mute=1&loop=1&playlist=lw-SPFj9axc&controls=0&playsinline=1',
     img: 'https://i.postimg.cc/jjrG917Y/doce.png'
   },
@@ -30,7 +30,7 @@ const categorias = [
     icon: '⚙️',
     nome: 'Acessórios',
     quantidade: 'Filtros, luzes e mais',
-    filtro: 'Acessorios',
+    filtro: 'Acessórios',
     video: 'https://www.youtube.com/embed/ySY_FhzPi14?autoplay=1&mute=1&loop=1&playlist=ySY_FhzPi14&controls=0&playsinline=1',
     img: 'https://i.postimg.cc/hvwY0ZB9/equip.png'
   },
