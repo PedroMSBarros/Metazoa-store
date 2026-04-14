@@ -12,22 +12,22 @@ const categoriasPeixes = [
 ]
 
 const subcategorias = [
-  { label: 'Todos Agua Doce', value: 'Agua Doce' },
+  { label: 'Todos Água Doce', value: 'Água Doce' },
   { label: 'Primitivos', value: 'Primitivos' },
-  { label: 'Amazônicos', value: 'Amazonicos' },
+  { label: 'Amazônicos', value: 'Amazônicos' },
   { label: 'Variados', value: 'Variados' },
   { label: 'Jumbos', value: 'Jumbos' },
   { label: 'Cascudos', value: 'Cascudos' },
-  { label: 'Ciclídeos Africanos', value: 'Ciclideos Africanos' },
+  { label: 'Ciclídeos Africanos', value: 'Ciclídeos Africanos' },
 ]
 
 const categoriasProdutos = [
-  { label: 'Acessorios', value: 'Acessorios' },
+  { label: 'Acessórios', value: 'Acessórios' },
   { label: 'Outros', value: 'Outros' },
 ]
 
-const aguaDoceValues = ['Agua Doce', 'Primitivos', 'Amazonicos', 'Variados', 'Jumbos', 'Cascudos', 'Ciclideos Africanos']
-const produtosValues = ['Acessorios', 'Outros']
+const aguaDoceValues = ['Água Doce', 'Primitivos', 'Amazônicos', 'Variados', 'Jumbos', 'Cascudos', 'Ciclídeos Africanos']
+const produtosValues = ['Acessórios', 'Outros']
 
 function Catalogo() {
   const [peixes, setPeixes] = useState([])
@@ -67,7 +67,7 @@ function Catalogo() {
   const itensFiltrados = todosItens
     .filter(item => {
       if (filtro === 'Todos') return true
-      if (filtro === 'Agua Doce') return aguaDoceValues.includes(item.categoria)
+      if (filtro === 'Água Doce') return aguaDoceValues.includes(item.categoria)
       return item.categoria === filtro
     })
     .filter(item => {
@@ -83,7 +83,7 @@ function Catalogo() {
 
   function handleFiltro(value) {
     setFiltro(value)
-    if (!aguaDoceValues.includes(value) && value !== 'Agua Doce') setMostrarAguaDoce(false)
+    if (!aguaDoceValues.includes(value) && value !== 'Água Doce') setMostrarAguaDoce(false)
   }
 
   return (
@@ -116,8 +116,8 @@ function Catalogo() {
             <button onClick={() => { handleFiltro('Todos'); setMostrarAguaDoce(false) }} className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${filtro === 'Todos' ? 'bg-[#5B8C7A] text-white' : 'bg-white text-[#6B5B3E] hover:bg-[#5B8C7A] hover:text-white'}`}>
               Todos
             </button>
-            <button onClick={() => { setMostrarAguaDoce(!mostrarAguaDoce); handleFiltro('Agua Doce') }} className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${aguaDoceValues.includes(filtro) ? 'bg-[#5B8C7A] text-white' : 'bg-white text-[#6B5B3E] hover:bg-[#5B8C7A] hover:text-white'}`}>
-              Agua Doce ▾
+            <button onClick={() => { setMostrarAguaDoce(!mostrarAguaDoce); handleFiltro('Água Doce') }} className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${aguaDoceValues.includes(filtro) ? 'bg-[#5B8C7A] text-white' : 'bg-white text-[#6B5B3E] hover:bg-[#5B8C7A] hover:text-white'}`}>
+              Água Doce ▾
             </button>
             {categoriasPeixes.map(cat => (
               <button key={cat.value} onClick={() => handleFiltro(cat.value)} className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${filtro === cat.value ? 'bg-[#5B8C7A] text-white' : 'bg-white text-[#6B5B3E] hover:bg-[#5B8C7A] hover:text-white'}`}>
