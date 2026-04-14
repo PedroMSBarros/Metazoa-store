@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { Loader, Search, X } from 'lucide-react'
 import { Link, useSearchParams } from 'react-router-dom'
@@ -59,12 +59,12 @@ function Catalogo() {
     buscarTudo()
   }, [])
 
-  const todosItens = [
+  const todosItens = useMemo(() => [
     ...peixes.map(p => ({ ...p, _tipo: 'peixe' })),
     ...produtos.map(p => ({ ...p, _tipo: 'produto' }))
-  ]
+  ], [peixes, produtos])
 
-  const itensFiltrados = todosItens
+  const itensFiltrados = useMemo(() => todosItens
     .filter(item => {
       if (filtro === 'Todos') return true
       if (filtro === 'Água Doce') return aguaDoceValues.includes(item.categoria)
@@ -79,12 +79,12 @@ function Catalogo() {
         item.descricao?.toLowerCase().includes(termo) ||
         item.categoria?.toLowerCase().includes(termo)
       )
-    })
+    }), [todosItens, filtro, busca])
 
-  function handleFiltro(value) {
+  const handleFiltro = useCallback((value) => {
     setFiltro(value)
     if (!aguaDoceValues.includes(value) && value !== 'Água Doce') setMostrarAguaDoce(false)
-  }
+  }, [])
 
   return (
     <div className="bg-[#F4F1E1] min-h-screen">
@@ -160,7 +160,7 @@ function Catalogo() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {itensFiltrados.map((item, i) => (
-              <motion.div key={item.id + item._tipo} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
+              <motion.div key={item.id + item._tipo} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
                 <Link to={"/" + item._tipo + "/" + item.id} className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow block">
                   <div className={`relative aspect-[4/3] overflow-hidden bg-[#E8E3CC] ${item.disponivel === false ? 'opacity-60' : ''}`}>
                     <img src={item.imagem_url} alt={item.nome} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
@@ -176,7 +176,7 @@ function Catalogo() {
                     {item.nome_cientifico && <span className="font-serif italic text-sm text-[#9C8A6A] block mb-2">{item.nome_cientifico}</span>}
                     {item.descricao && <span className="text-sm text-[#7A6A52] block mb-3 line-clamp-2">{item.descricao}</span>}
                     <div className="flex justify-between items-center pt-3 border-t border-[#E8E3CC]">
-                      <span className="font-serif text-2xl font-semibold text-[#6B5B3E]">{item.preco ? `R$ ${Number(item.preco).toFixed(2)}` : ''}</span>
+                      <span className="font-serif text-2xl font-semibold text-[#6B5B3E]">{item.preco || ''}</span>
                       <span className="bg-[#5B8C7A] text-white text-sm px-4 py-2 rounded">Ver mais</span>
                     </div>
                   </div>
