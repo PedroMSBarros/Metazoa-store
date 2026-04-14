@@ -164,11 +164,13 @@ function Catalogo() {
             {itensFiltrados.map((item, i) => (
               <motion.div key={item.id + item._tipo} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: i * 0.03 }}>
                 <Link to={"/" + item._tipo + "/" + item.id} className="bg-white rounded-xl overflow-hidden hover:-translate-y-1 transition-transform duration-300 shadow-sm hover:shadow-md block">
-                  <div className="relative aspect-[4/3] overflow-hidden bg-[#E8E3CC]">
+                  <div className={`relative aspect-[4/3] overflow-hidden bg-[#E8E3CC] ${item.disponivel === false ? 'opacity-60' : ''}`}>
                     <img src={item.imagem_url} alt={item.nome} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
-                    {item.badge && (
+                    {item.disponivel === false ? (
+                      <span className="absolute top-3 left-3 bg-[#8B6F47] text-white text-xs font-medium px-3 py-1 rounded-full">Indisponível</span>
+                    ) : item.badge ? (
                       <span className="absolute top-3 left-3 bg-[#5B8C7A] text-white text-xs font-medium px-3 py-1 rounded-full">{item.badge}</span>
-                    )}
+                    ) : null}
                   </div>
                   <div className="p-5">
                     <span className="text-xs font-medium tracking-widest uppercase text-[#9C8A6A] block mb-1">{item.categoria}</span>
