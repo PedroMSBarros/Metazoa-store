@@ -5,17 +5,17 @@ const CartContext = createContext()
 export function CartProvider({ children }) {
   const [itens, setItens] = useState([])
 
-  function adicionarItem(item) {
+  function adicionarItem(item, quantidade = 1) {
     setItens(prev => {
       const existe = prev.find(i => i.id === item.id && i._tipo === item._tipo)
       if (existe) {
         return prev.map(i =>
           i.id === item.id && i._tipo === item._tipo
-            ? { ...i, quantidade: i.quantidade + 1 }
+            ? { ...i, quantidade: i.quantidade + quantidade }
             : i
         )
       }
-      return [...prev, { ...item, quantidade: 1 }]
+      return [...prev, { ...item, quantidade }]
     })
   }
 
@@ -40,14 +40,17 @@ export function CartProvider({ children }) {
   }
 
   const total = itens.reduce((acc, item) => {
-    const preco = parseFloat(item.preco.replace('R$', '').replace('.', '').replace(',', '.').trim())
+    const preco = parseFloat(
+      item.preco.replace('R$', '').replace('.', '').replace(',', '.').trim()
+    )
     return acc + (isNaN(preco) ? 0 : preco * item.quantidade)
   }, 0)
 
   const totalItens = itens.reduce((acc, item) => acc + item.quantidade, 0)
 
   return (
-    <CartContext.Provider value={{ itens, adicionarItem, removerItem, alterarQuantidade, limparCarrinho, total, totalItens }}>
+    <CartContext.Provider
+      value={{ itens, adicionarItem, removerItem, alterarQuantidade, limparCarrinho, total, totalItens }}>
       {children}
     </CartContext.Provider>
   )
