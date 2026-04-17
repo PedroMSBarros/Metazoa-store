@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowLeft, MessageCircle, ShoppingCart, Thermometer, Droplets, Fish, Clock } from 'lucide-react'
+import { ArrowLeft, MessageCircle, ShoppingCart, Thermometer, Droplets, Fish, Clock, Minus, Plus } from 'lucide-react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { supabase } from '../lib/supabase'
@@ -13,6 +13,7 @@ function PeixeDetalhe() {
   const [peixe, setPeixe] = useState(null)
   const [carregando, setCarregando] = useState(true)
   const [adicionado, setAdicionado] = useState(false)
+  const [quantidade, setQuantidade] = useState(1)
   const { adicionarItem } = useCart()
 
   useEffect(() => {
@@ -25,9 +26,17 @@ function PeixeDetalhe() {
   }, [id])
 
   function handleAdicionarCarrinho() {
-    adicionarItem({ ...peixe, _tipo: 'peixe' })
+    adicionarItem({ ...peixe, _tipo: 'peixe' }, quantidade)
     setAdicionado(true)
     setTimeout(() => setAdicionado(false), 2000)
+  }
+
+  function diminuir() {
+    setQuantidade(q => Math.max(1, q - 1))
+  }
+
+  function aumentar() {
+    setQuantidade(q => q + 1)
   }
 
   if (carregando) {
@@ -44,13 +53,20 @@ function PeixeDetalhe() {
         <div className="text-center">
           <div className="text-5xl mb-4">🐠</div>
           <p className="text-[#7A6A52]">Peixe não encontrado.</p>
-          <button onClick={() => navigate('/catalogo')} className="mt-4 text-[#5B8C7A] underline">Voltar ao catálogo</button>
+          <button onClick={() => navigate('/catalogo')} className="mt-4 text-[#5B8C7A] underline">
+            Voltar ao catálogo
+          </button>
         </div>
       </div>
     )
   }
 
-  const msgWhatsApp = "Olá! Vim pelo site e tenho interesse no " + peixe.nome + " (" + peixe.preco + "). Poderia me passar mais informações?"
+  const msgWhatsApp =
+    'Olá! Vim pelo site e tenho interesse no ' +
+    peixe.nome +
+    ' (' +
+    peixe.preco +
+    '). Poderia me passar mais informações?'
 
   const infos = [
     { icon: Thermometer, label: 'Temperatura', valor: peixe.temperatura },
@@ -64,26 +80,39 @@ function PeixeDetalhe() {
   return (
     <div className="bg-[#F4F1E1] min-h-screen">
       <Header />
-
       <div className="pt-24 pb-20 px-6 max-w-6xl mx-auto">
-
-        <motion.button onClick={() => navigate(-1)} className="flex items-center gap-2 text-[#7A6A52] hover:text-[#5B8C7A] transition-colors mb-8 text-sm" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }}>
-          <ArrowLeft size={16} /> Voltar
+        <motion.button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 text-[#7A6A52] hover:text-[#5B8C7A] transition-colors mb-8 text-sm"
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4 }}>
+          <ArrowLeft size={16} />
+          Voltar
         </motion.button>
 
         <div className="grid md:grid-cols-2 gap-12 items-start">
-
-          <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }}>
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}>
             <div className="relative rounded-2xl overflow-hidden aspect-square bg-[#E8E3CC]">
               <img src={peixe.imagem_url} alt={peixe.nome} className="w-full h-full object-cover" />
               {peixe.badge && (
-                <span className="absolute top-4 left-4 bg-[#5B8C7A] text-white text-xs font-medium px-3 py-1 rounded-full">{peixe.badge}</span>
+                <span className="absolute top-4 left-4 bg-[#5B8C7A] text-white text-xs font-medium px-3 py-1 rounded-full">
+                  {peixe.badge}
+                </span>
               )}
             </div>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }}>
-            <span className="text-xs font-medium tracking-widest uppercase text-[#9C8A6A] block mb-2">{peixe.categoria}</span>
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}>
+            <span className="text-xs font-medium tracking-widest uppercase text-[#9C8A6A] block mb-2">
+              {peixe.categoria}
+            </span>
             <h1 className="font-serif text-4xl font-light text-[#2C2416] mb-1">{peixe.nome}</h1>
             <p className="font-serif italic text-[#7A6A52] mb-6">{peixe.nome_cientifico}</p>
 
@@ -93,7 +122,7 @@ function PeixeDetalhe() {
             </div>
 
             {infosVisiveis.length > 0 && (
-              <div className={`grid grid-cols-2 gap-3 mb-8`}>
+              <div className="grid grid-cols-2 gap-3 mb-8">
                 {infosVisiveis.map(({ icon: Icon, label, valor }) => (
                   <div key={label} className="bg-white rounded-xl p-4 flex items-center gap-3">
                     <Icon className="text-[#5B8C7A] flex-shrink-0" size={20} />
@@ -106,21 +135,52 @@ function PeixeDetalhe() {
               </div>
             )}
 
+            {/* Seletor de quantidade */}
+            <div className="flex items-center gap-4 mb-4">
+              <span className="text-sm font-medium text-[#6B5B3E]">Quantidade:</span>
+              <div className="flex items-center border border-[#D9D2B0] rounded-xl overflow-hidden">
+                <button
+                  onClick={diminuir}
+                  className="px-4 py-3 text-[#6B5B3E] hover:bg-[#E8E3CC] transition-colors disabled:opacity-40"
+                  disabled={quantidade <= 1}>
+                  <Minus size={16} />
+                </button>
+                <span className="px-5 py-3 font-semibold text-[#2C2416] min-w-[3rem] text-center border-x border-[#D9D2B0]">
+                  {quantidade}
+                </span>
+                <button
+                  onClick={aumentar}
+                  className="px-4 py-3 text-[#6B5B3E] hover:bg-[#E8E3CC] transition-colors">
+                  <Plus size={16} />
+                </button>
+              </div>
+            </div>
+
             <div className="flex flex-col gap-3">
-              <button onClick={handleAdicionarCarrinho} className={`px-6 py-4 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors ${adicionado ? 'bg-[#4A8C1C] text-white' : 'bg-[#6B5B3E] text-white hover:bg-[#2C2416]'}`}>
+              <button
+                onClick={handleAdicionarCarrinho}
+                className={`px-6 py-4 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors ${
+                  adicionado
+                    ? 'bg-[#4A8C1C] text-white'
+                    : 'bg-[#6B5B3E] text-white hover:bg-[#2C2416]'
+                }`}>
                 <ShoppingCart size={20} />
                 {adicionado ? '✓ Adicionado ao carrinho!' : 'Adicionar ao carrinho'}
               </button>
-              <a href={"https://wa.me/5511971526750?text=" + encodeURIComponent(msgWhatsApp)} target="_blank" rel="noreferrer" className="border border-[#9C8A6A] text-[#6B5B3E] px-6 py-4 rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-[#6B5B3E] hover:text-white transition-colors">
-                <MessageCircle size={20} /> Consultar pelo WhatsApp
+              <a
+                href={'https://wa.me/5511971526750?text=' + encodeURIComponent(msgWhatsApp)}
+                target="_blank"
+                rel="noreferrer"
+                className="border border-[#9C8A6A] text-[#6B5B3E] px-6 py-4 rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-[#6B5B3E] hover:text-white transition-colors">
+                <MessageCircle size={20} />
+                Consultar pelo WhatsApp
               </a>
             </div>
-
-            <p className="text-xs text-[#7A6A52] mt-4 text-center">Entrega para todo o Brasil. Frete calculado no atendimento.</p>
+            <p className="text-xs text-[#7A6A52] mt-4 text-center">
+              Entrega para todo o Brasil. Frete calculado no atendimento.
+            </p>
           </motion.div>
-
         </div>
-
       </div>
       <Footer />
     </div>
