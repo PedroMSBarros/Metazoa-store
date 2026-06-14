@@ -10,7 +10,7 @@ function Destaques() {
 
   useEffect(() => {
     async function buscarPeixes() {
-      const { data, error } = await supabase.from('peixes').select('*').order('nome').limit(6)
+      const { data, error } = await supabase.from('peixes').select('*').order('criado_em', { ascending: false }).limit(6)
       if (!error) setPeixes(data)
       setCarregando(false)
     }
