@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom'
-import { Menu, X, ShoppingCart } from 'lucide-react'
+import { Link, useNavigate } from 'react-router-dom'
+import { Menu, X, ShoppingCart, Search } from 'lucide-react'
 import { useState } from 'react'
 import { useCart } from './CartContext'
 import Carrinho from './Carrinho'
@@ -7,21 +7,47 @@ import Carrinho from './Carrinho'
 function Header() {
   const [menuAberto, setMenuAberto] = useState(false)
   const [carrinhoAberto, setCarrinhoAberto] = useState(false)
+  const [busca, setBusca] = useState('')
+  const [buscaAberta, setBuscaAberta] = useState(false)
   const { totalItens } = useCart()
+  const navigate = useNavigate()
+
+  function handleBusca(e) {
+    e.preventDefault()
+    if (busca.trim()) {
+      navigate('/catalogo?busca=' + encodeURIComponent(busca.trim()))
+      setBusca('')
+      setBuscaAberta(false)
+    }
+  }
 
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-50 bg-[#2C1A0E]/95 backdrop-blur-md border-b border-[#4A3020]">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
 
-          <Link to="/" className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-3 flex-shrink-0">
             <img src="https://i.postimg.cc/Kk3XcgDg/image.png" alt="Metazoa Store" className="h-10 w-10 rounded-full object-cover" />
             <span className="font-serif text-xl font-semibold text-[#C8D4A0]">
               metazoa <span className="text-[#4A8C1C] font-bold not-italic">STORE</span>
             </span>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-8">
+          {/* Barra de busca desktop */}
+          <form onSubmit={handleBusca} className="hidden md:flex flex-1 max-w-sm relative">
+            <input
+              type="text"
+              value={busca}
+              onChange={e => setBusca(e.target.value)}
+              placeholder="Buscar peixe ou produto..."
+              className="w-full bg-[#3A2510] border border-[#5A3A20] rounded-full px-4 py-2 pr-10 text-sm text-[#C8D4A0] placeholder-[#7A6A52] focus:outline-none focus:border-[#4A8C1C] transition-colors"
+            />
+            <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2 text-[#7A6A52] hover:text-[#4A8C1C] transition-colors">
+              <Search size={16} />
+            </button>
+          </form>
+
+          <nav className="hidden md:flex items-center gap-6">
             <Link to="/" className="text-sm text-[#C8D4A0]/70 hover:text-[#C8D4A0] transition-colors">Início</Link>
             <Link to="/catalogo" className="text-sm text-[#C8D4A0]/70 hover:text-[#C8D4A0] transition-colors">Catálogo</Link>
             <Link to="/sobre" className="text-sm text-[#C8D4A0]/70 hover:text-[#C8D4A0] transition-colors">Sobre</Link>
@@ -39,7 +65,10 @@ function Header() {
             </a>
           </nav>
 
-          <div className="flex items-center gap-4 md:hidden">
+          <div className="flex items-center gap-3 md:hidden">
+            <button onClick={() => setBuscaAberta(!buscaAberta)} className="text-[#C8D4A0]">
+              <Search size={20} />
+            </button>
             <button onClick={() => setCarrinhoAberto(true)} className="relative text-[#C8D4A0]">
               <ShoppingCart size={22} />
               {totalItens > 0 && (
@@ -53,6 +82,25 @@ function Header() {
             </button>
           </div>
         </div>
+
+        {/* Busca mobile */}
+        {buscaAberta && (
+          <form onSubmit={handleBusca} className="md:hidden px-4 pb-3 bg-[#2C1A0E]">
+            <div className="relative">
+              <input
+                type="text"
+                value={busca}
+                onChange={e => setBusca(e.target.value)}
+                placeholder="Buscar peixe ou produto..."
+                autoFocus
+                className="w-full bg-[#3A2510] border border-[#5A3A20] rounded-full px-4 py-2 pr-10 text-sm text-[#C8D4A0] placeholder-[#7A6A52] focus:outline-none focus:border-[#4A8C1C] transition-colors"
+              />
+              <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2 text-[#7A6A52] hover:text-[#4A8C1C] transition-colors">
+                <Search size={16} />
+              </button>
+            </div>
+          </form>
+        )}
 
         {menuAberto && (
           <div className="md:hidden bg-[#2C1A0E] border-t border-[#4A3020] px-6 py-4 flex flex-col gap-4">

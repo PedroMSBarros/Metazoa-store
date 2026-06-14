@@ -39,6 +39,8 @@ function Catalogo() {
   const [searchParams] = useSearchParams()
 
   useEffect(() => {
+    const buscaParam = searchParams.get('busca')
+    if (buscaParam) setBusca(buscaParam)
     const categoriaParam = searchParams.get('categoria')
     if (categoriaParam) {
       setFiltro(categoriaParam)
@@ -49,8 +51,8 @@ function Catalogo() {
   useEffect(() => {
     async function buscarTudo() {
       const [{ data: dataPeixes }, { data: dataProdutos }] = await Promise.all([
-        supabase.from('peixes').select('*').order('nome'),
-        supabase.from('produtos').select('*').order('nome')
+        supabase.from('peixes').select('*'),
+        supabase.from('produtos').select('*')
       ])
       if (dataPeixes) setPeixes(dataPeixes)
       if (dataProdutos) setProdutos(dataProdutos)
