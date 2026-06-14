@@ -33,7 +33,6 @@ function Header() {
             </span>
           </Link>
 
-          {/* Barra de busca desktop */}
           <form onSubmit={handleBusca} className="hidden md:flex flex-1 max-w-sm relative">
             <input
               type="text"
@@ -83,7 +82,6 @@ function Header() {
           </div>
         </div>
 
-        {/* Busca mobile */}
         {buscaAberta && (
           <form onSubmit={handleBusca} className="md:hidden px-4 pb-3 bg-[#2C1A0E]">
             <div className="relative">
@@ -109,7 +107,7 @@ function Header() {
             <Link to="/sobre" onClick={() => setMenuAberto(false)} className="text-[#C8D4A0]">Sobre</Link>
             <Link to="/cuidados" onClick={() => setMenuAberto(false)} className="text-[#C8D4A0]">Cuidados</Link>
             <a href="https://wa.me/5511971526750" target="_blank" rel="noreferrer" className="text-[#4A8C1C] font-semibold">
-              💬 WhatsApp
+              WhatsApp
             </a>
           </div>
         )}
