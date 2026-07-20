@@ -14,11 +14,11 @@ const categoriasPeixes = [
 const subcategorias = [
   { label: 'Todos Agua Doce', value: 'Agua Doce' },
   { label: 'Primitivos', value: 'Primitivos' },
-  { label: 'Amazônicos', value: 'Amazonicos' },
+  { label: 'Amazônicos', value: 'Amazônicos' },
   { label: 'Variados', value: 'Variados' },
   { label: 'Jumbos', value: 'Jumbos' },
   { label: 'Cascudos', value: 'Cascudos' },
-  { label: 'Ciclídeos Africanos', value: 'Ciclideos Africanos' },
+  { label: 'Ciclídeos Africanos', value: 'Ciclídeos Africanos' },
 ]
 
 const categoriasProdutos = [
@@ -26,7 +26,7 @@ const categoriasProdutos = [
   { label: 'Outros', value: 'Outros' },
 ]
 
-const aguaDoceValues = ['Agua Doce', 'Primitivos', 'Amazonicos', 'Variados', 'Jumbos', 'Cascudos', 'Ciclideos Africanos']
+const aguaDoceValues = ['Agua Doce', 'Primitivos', 'Amazônicos', 'Variados', 'Jumbos', 'Cascudos', 'Ciclídeos Africanos']
 const produtosValues = ['Acessorios', 'Outros']
 
 function Catalogo() {
@@ -96,7 +96,7 @@ function Catalogo() {
         <motion.div className="mb-10" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
           <span className="text-[#5B8C7A] text-sm font-medium tracking-widest uppercase flex items-center gap-2">
             <span className="w-7 h-px bg-[#5B8C7A]"></span>
-            Catalogo completo
+            Catálogo completo
           </span>
           <h1 className="font-serif text-4xl font-light mt-2 text-[#2C2416]">
             Nossos <span className="text-[#5B8C7A] italic">produtos</span>
