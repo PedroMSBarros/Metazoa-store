@@ -176,28 +176,41 @@ function Catalogo() {
         ) : (
           <>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {itensVisiveis.map((item, i) => (
-                <div key={item.id + item._tipo} className="animate-fadein" style={{ animationDelay: (i % ITENS_POR_PAGINA) * 0.02 + 's' }}>
-                  <Link to={"/" + item._tipo + "/" + item.id} className="bg-white rounded-xl overflow-hidden hover:-translate-y-1 transition-transform duration-300 shadow-sm hover:shadow-md block">
-                    <div className="relative aspect-[4/3] overflow-hidden bg-[#E8E3CC]">
-                      <img src={item.imagem_url} alt={item.nome} loading="lazy" decoding="async" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
-                      {item.badge && (
-                        <span className="absolute top-3 left-3 bg-[#5B8C7A] text-white text-xs font-medium px-3 py-1 rounded-full">{item.badge}</span>
-                      )}
-                    </div>
-                    <div className="p-5">
-                      <span className="text-xs font-medium tracking-widest uppercase text-[#9C8A6A] block mb-1">{item.categoria}</span>
-                      <div className="font-serif text-xl text-[#2C2416] mb-1">{item.nome}</div>
-                      {item.nome_cientifico && <span className="font-serif italic text-sm text-[#7A6A52] block mb-3">{item.nome_cientifico}</span>}
-                      {item.descricao && <span className="text-sm text-[#7A6A52] block mb-3 line-clamp-2">{item.descricao}</span>}
-                      <div className="flex justify-between items-center pt-3 border-t border-[#E8E3CC]">
-                        <span className="font-serif text-2xl font-semibold text-[#6B5B3E]">{item.preco}</span>
-                        <span className="bg-[#5B8C7A] text-white text-sm px-4 py-2 rounded">Ver detalhes</span>
+              {itensVisiveis.map((item, i) => {
+                const indisponivel = item.disponivel === false
+                return (
+                  <div key={item.id + item._tipo} className="animate-fadein" style={{ animationDelay: (i % ITENS_POR_PAGINA) * 0.02 + 's' }}>
+                    <Link to={"/" + item._tipo + "/" + item.id} className="bg-white rounded-xl overflow-hidden hover:-translate-y-1 transition-transform duration-300 shadow-sm hover:shadow-md block">
+                      <div className="relative aspect-[4/3] overflow-hidden bg-[#E8E3CC]">
+                        <img
+                          src={item.imagem_url}
+                          alt={item.nome}
+                          loading="lazy"
+                          decoding="async"
+                          className={`w-full h-full object-cover transition-transform duration-500 ${indisponivel ? 'grayscale' : 'hover:scale-105'}`}
+                        />
+                        {indisponivel ? (
+                          <span className="absolute top-3 left-3 bg-red-600 text-white text-xs font-medium px-3 py-1 rounded-full">Indisponível</span>
+                        ) : item.badge ? (
+                          <span className="absolute top-3 left-3 bg-[#5B8C7A] text-white text-xs font-medium px-3 py-1 rounded-full">{item.badge}</span>
+                        ) : null}
                       </div>
-                    </div>
-                  </Link>
-                </div>
-              ))}
+                      <div className="p-5">
+                        <span className="text-xs font-medium tracking-widest uppercase text-[#9C8A6A] block mb-1">{item.categoria}</span>
+                        <div className="font-serif text-xl text-[#2C2416] mb-1">{item.nome}</div>
+                        {item.nome_cientifico && <span className="font-serif italic text-sm text-[#7A6A52] block mb-3">{item.nome_cientifico}</span>}
+                        {item.descricao && <span className="text-sm text-[#7A6A52] block mb-3 line-clamp-2">{item.descricao}</span>}
+                        <div className="flex justify-between items-center pt-3 border-t border-[#E8E3CC]">
+                          <span className={`font-serif text-2xl font-semibold ${indisponivel ? 'text-[#9C8A6A] line-through' : 'text-[#6B5B3E]'}`}>{item.preco}</span>
+                          <span className={`text-sm px-4 py-2 rounded text-white ${indisponivel ? 'bg-[#9C8A6A]' : 'bg-[#5B8C7A]'}`}>
+                            {indisponivel ? 'Consultar' : 'Ver detalhes'}
+                          </span>
+                        </div>
+                      </div>
+                    </Link>
+                  </div>
+                )
+              })}
             </div>
 
             {temMais && (
