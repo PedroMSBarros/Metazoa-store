@@ -1,9 +1,25 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useState, useEffect } from 'react'
 
 const CartContext = createContext()
+const STORAGE_KEY = 'metazoa-carrinho'
 
 export function CartProvider({ children }) {
-  const [itens, setItens] = useState([])
+  const [itens, setItens] = useState(() => {
+    try {
+      const salvo = localStorage.getItem(STORAGE_KEY)
+      return salvo ? JSON.parse(salvo) : []
+    } catch {
+      return []
+    }
+  })
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(itens))
+    } catch {
+      // localStorage indisponivel, carrinho fica só em memória
+    }
+  }, [itens])
 
   function adicionarItem(item, quantidade = 1) {
     setItens(prev => {

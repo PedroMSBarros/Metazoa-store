@@ -29,6 +29,8 @@ const categoriasProdutos = [
 const aguaDoceValues = ['Agua Doce', 'Primitivos', 'Amazônicos', 'Variados', 'Jumbos', 'Cascudos', 'Ciclídeos Africanos']
 const produtosValues = ['Acessorios', 'Outros']
 
+const ITENS_POR_PAGINA = 24
+
 function Catalogo() {
   const [peixes, setPeixes] = useState([])
   const [produtos, setProdutos] = useState([])
@@ -36,6 +38,7 @@ function Catalogo() {
   const [filtro, setFiltro] = useState('Todos')
   const [mostrarAguaDoce, setMostrarAguaDoce] = useState(false)
   const [busca, setBusca] = useState('')
+  const [paginaAtual, setPaginaAtual] = useState(1)
   const [searchParams] = useSearchParams()
 
   useEffect(() => {
@@ -61,6 +64,10 @@ function Catalogo() {
     buscarTudo()
   }, [])
 
+  useEffect(() => {
+    setPaginaAtual(1)
+  }, [filtro, busca])
+
   const todosItens = [
     ...peixes.map(p => ({ ...p, _tipo: 'peixe' })),
     ...produtos.map(p => ({ ...p, _tipo: 'produto' }))
@@ -82,6 +89,9 @@ function Catalogo() {
         item.categoria?.toLowerCase().includes(termo)
       )
     })
+
+  const itensVisiveis = itensFiltrados.slice(0, paginaAtual * ITENS_POR_PAGINA)
+  const temMais = itensVisiveis.length < itensFiltrados.length
 
   function handleFiltro(value) {
     setFiltro(value)
@@ -113,7 +123,7 @@ function Catalogo() {
           )}
         </motion.div>
 
-        <div className="mb-8">
+        <div className="mb-6">
           <div className="flex gap-3 flex-wrap">
             <button onClick={() => { handleFiltro('Todos'); setMostrarAguaDoce(false) }} className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${filtro === 'Todos' ? 'bg-[#5B8C7A] text-white' : 'bg-white text-[#6B5B3E] hover:bg-[#5B8C7A] hover:text-white'}`}>
               Todos
@@ -145,11 +155,13 @@ function Catalogo() {
           )}
         </div>
 
-        {busca && (
-          <p className="text-sm text-[#7A6A52] mb-6">
-            {itensFiltrados.length} resultado{itensFiltrados.length !== 1 ? 's' : ''} para <span className="font-medium text-[#2C2416]">"{busca}"</span>
-          </p>
-        )}
+        <p className="text-sm text-[#7A6A52] mb-6">
+          {busca ? (
+            <>{itensFiltrados.length} resultado{itensFiltrados.length !== 1 ? 's' : ''} para <span className="font-medium text-[#2C2416]">"{busca}"</span></>
+          ) : (
+            <>Mostrando {itensVisiveis.length} de {itensFiltrados.length} produtos</>
+          )}
+        </p>
 
         {carregando ? (
           <div className="flex justify-center items-center py-20">
@@ -162,30 +174,40 @@ function Catalogo() {
             <button onClick={() => { setBusca(''); setFiltro('Todos') }} className="mt-4 text-[#5B8C7A] underline text-sm">Limpar filtros</button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {itensFiltrados.map((item, i) => (
-              <motion.div key={item.id + item._tipo} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: i * 0.03 }}>
-                <Link to={"/" + item._tipo + "/" + item.id} className="bg-white rounded-xl overflow-hidden hover:-translate-y-1 transition-transform duration-300 shadow-sm hover:shadow-md block">
-                  <div className="relative aspect-[4/3] overflow-hidden bg-[#E8E3CC]">
-                    <img src={item.imagem_url} alt={item.nome} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
-                    {item.badge && (
-                      <span className="absolute top-3 left-3 bg-[#5B8C7A] text-white text-xs font-medium px-3 py-1 rounded-full">{item.badge}</span>
-                    )}
-                  </div>
-                  <div className="p-5">
-                    <span className="text-xs font-medium tracking-widest uppercase text-[#9C8A6A] block mb-1">{item.categoria}</span>
-                    <div className="font-serif text-xl text-[#2C2416] mb-1">{item.nome}</div>
-                    {item.nome_cientifico && <span className="font-serif italic text-sm text-[#7A6A52] block mb-3">{item.nome_cientifico}</span>}
-                    {item.descricao && <span className="text-sm text-[#7A6A52] block mb-3 line-clamp-2">{item.descricao}</span>}
-                    <div className="flex justify-between items-center pt-3 border-t border-[#E8E3CC]">
-                      <span className="font-serif text-2xl font-semibold text-[#6B5B3E]">{item.preco}</span>
-                      <span className="bg-[#5B8C7A] text-white text-sm px-4 py-2 rounded">Ver detalhes</span>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {itensVisiveis.map((item, i) => (
+                <div key={item.id + item._tipo} className="animate-fadein" style={{ animationDelay: (i % ITENS_POR_PAGINA) * 0.02 + 's' }}>
+                  <Link to={"/" + item._tipo + "/" + item.id} className="bg-white rounded-xl overflow-hidden hover:-translate-y-1 transition-transform duration-300 shadow-sm hover:shadow-md block">
+                    <div className="relative aspect-[4/3] overflow-hidden bg-[#E8E3CC]">
+                      <img src={item.imagem_url} alt={item.nome} loading="lazy" decoding="async" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                      {item.badge && (
+                        <span className="absolute top-3 left-3 bg-[#5B8C7A] text-white text-xs font-medium px-3 py-1 rounded-full">{item.badge}</span>
+                      )}
                     </div>
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
+                    <div className="p-5">
+                      <span className="text-xs font-medium tracking-widest uppercase text-[#9C8A6A] block mb-1">{item.categoria}</span>
+                      <div className="font-serif text-xl text-[#2C2416] mb-1">{item.nome}</div>
+                      {item.nome_cientifico && <span className="font-serif italic text-sm text-[#7A6A52] block mb-3">{item.nome_cientifico}</span>}
+                      {item.descricao && <span className="text-sm text-[#7A6A52] block mb-3 line-clamp-2">{item.descricao}</span>}
+                      <div className="flex justify-between items-center pt-3 border-t border-[#E8E3CC]">
+                        <span className="font-serif text-2xl font-semibold text-[#6B5B3E]">{item.preco}</span>
+                        <span className="bg-[#5B8C7A] text-white text-sm px-4 py-2 rounded">Ver detalhes</span>
+                      </div>
+                    </div>
+                  </Link>
+                </div>
+              ))}
+            </div>
+
+            {temMais && (
+              <div className="flex justify-center mt-10">
+                <button onClick={() => setPaginaAtual(p => p + 1)} className="bg-white border border-[#D9D2B0] text-[#6B5B3E] px-8 py-3 rounded-full text-sm font-medium hover:bg-[#5B8C7A] hover:text-white hover:border-[#5B8C7A] transition-colors">
+                  Carregar mais ({itensFiltrados.length - itensVisiveis.length} restantes)
+                </button>
+              </div>
+            )}
+          </>
         )}
 
       </div>
