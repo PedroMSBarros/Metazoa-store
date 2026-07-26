@@ -5,6 +5,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { supabase } from '../lib/supabase'
+import { trackBusca } from '../lib/analytics'
 
 const categoriasPeixes = [
   { label: 'Marinho', value: 'Marinho' },
@@ -67,6 +68,15 @@ function Catalogo() {
   useEffect(() => {
     setPaginaAtual(1)
   }, [filtro, busca])
+
+  // Rastreia a busca 600ms depois que o usuário para de digitar
+  useEffect(() => {
+    if (!busca) return
+    const timeout = setTimeout(() => {
+      trackBusca(busca)
+    }, 600)
+    return () => clearTimeout(timeout)
+  }, [busca])
 
   const todosItens = [
     ...peixes.map(p => ({ ...p, _tipo: 'peixe' })),
