@@ -10,10 +10,8 @@ import WhatsAppFloat from './components/WhatsAppFloat'
 
 function RedirecionadorHash() {
   const navigate = useNavigate()
-  const location = useLocation()
 
   useEffect(() => {
-    // Redireciona links antigos com #/ para a rota normal
     if (window.location.hash.startsWith('#/')) {
       const novaRota = window.location.hash.replace('#', '')
       navigate(novaRota, { replace: true })
@@ -23,10 +21,26 @@ function RedirecionadorHash() {
   return null
 }
 
+function RastreadorPagina() {
+  const location = useLocation()
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'page_view', {
+        page_path: location.pathname + location.search,
+        page_title: document.title,
+      })
+    }
+  }, [location])
+
+  return null
+}
+
 function App() {
   return (
     <>
       <RedirecionadorHash />
+      <RastreadorPagina />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/catalogo" element={<Catalogo />} />
