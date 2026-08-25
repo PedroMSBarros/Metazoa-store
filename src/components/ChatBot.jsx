@@ -52,9 +52,9 @@ function ChatBot() {
     }
   }, [mensagens])
 
-  async function enviarMensagem(e) {
-    e.preventDefault()
-    const texto = input.trim()
+  async function enviarMensagem(e, textoForcado) {
+    if (e) e.preventDefault()
+    const texto = (textoForcado ?? input).trim()
     if (!texto || carregando) return
 
     if (pegarContadorHoje() >= LIMITE_MENSAGENS_DIA) {
@@ -83,7 +83,10 @@ function ChatBot() {
       const dados = await resposta.json()
 
       if (!resposta.ok) {
-        setMensagens(prev => [...prev, { autor: 'bot', texto: 'Desculpa, tive um probleminha. Que tal falar com a gente pelo WhatsApp?' }])
+        const mensagemErro = resposta.status === 502
+          ? 'Nosso assistente está com bastante gente conversando agora 🐠 Tenta de novo em alguns segundos, ou fala direto com a gente pelo WhatsApp!'
+          : 'Desculpa, tive um probleminha. Que tal falar com a gente pelo WhatsApp?'
+        setMensagens(prev => [...prev, { autor: 'bot', texto: mensagemErro }])
       } else {
         setMensagens(prev => [...prev, { autor: 'bot', texto: dados.texto }])
       }
@@ -129,7 +132,7 @@ function ChatBot() {
               </div>
             )}
             {mensagens.map((msg, i) => (
-              <div key={i} className={`max-w-[85%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
+              <div key={i} className={`max-w-[85%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
                 msg.autor === 'usuario'
                   ? 'bg-[#5B8C7A] text-white self-end rounded-br-sm'
                   : 'bg-white text-[#2C2416] self-start rounded-bl-sm shadow-sm'
