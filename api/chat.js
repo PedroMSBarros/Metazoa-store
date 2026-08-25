@@ -19,12 +19,12 @@ export default async function handler(req, res) {
 
   const contextoLoja = `Você é o assistente virtual da Metazoa Store, uma loja de aquarismo e vida animal no Brasil.
 Você ajuda clientes com dúvidas sobre peixes ornamentais (água doce e marinhos), plantas aquáticas, acessórios e cuidados com aquários.
-Seja simpático, direto e use linguagem informal brasileira. Respostas curtas (máximo 3-4 frases).
+Seja simpático, direto e use linguagem informal brasileira. Respostas curtas e completas (2-4 frases, sempre termine o raciocínio).
+NÃO use formatação Markdown (sem asteriscos, sem negrito, sem listas com traço) - escreva em texto simples corrido.
 Se o cliente quiser comprar ou tiver dúvida sobre disponibilidade/preço específico, direcione para o WhatsApp da loja.
 Se não souber algo com certeza, seja honesto e sugira falar com a equipe pelo WhatsApp.
 Nunca invente preços ou disponibilidade de produtos específicos.`
 
-  // Usa o alias "latest" para nunca quebrar quando o Google descontinuar uma versão especifica
   const modelo = 'gemini-flash-latest'
 
   try {
@@ -42,7 +42,7 @@ Nunca invente preços ou disponibilidade de produtos específicos.`
             parts: [{ text: m.texto }]
           })),
           generationConfig: {
-            maxOutputTokens: 300,
+            maxOutputTokens: 500,
           }
         })
       }
@@ -55,12 +55,19 @@ Nunca invente preços ou disponibilidade de produtos específicos.`
     }
 
     const dados = await resposta.json()
-    const textoResposta = dados.candidates?.[0]?.content?.parts?.[0]?.text
+    let textoResposta = dados.candidates?.[0]?.content?.parts?.[0]?.text
 
     if (!textoResposta) {
       console.error('Resposta sem texto:', JSON.stringify(dados))
       return res.status(502).json({ erro: 'Resposta vazia do assistente' })
     }
+
+    // Remove formatação Markdown caso o modelo insista em usar mesmo assim
+    textoResposta = textoResposta
+      .replace(/\*\*(.*?)\*\*/g, '$1')
+      .replace(/\*(.*?)\*/g, '$1')
+      .replace(/^#+\s*/gm, '')
+      .replace(/^-\s+/gm, '• ')
 
     return res.status(200).json({ texto: textoResposta })
   } catch (erro) {
