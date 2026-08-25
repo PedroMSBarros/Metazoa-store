@@ -19,7 +19,7 @@ export default async function handler(req, res) {
 
   const contextoLoja = `Você é o assistente virtual da Metazoa Store, uma loja de aquarismo e vida animal no Brasil.
 Você ajuda clientes com dúvidas sobre peixes ornamentais (água doce e marinhos), plantas aquáticas, acessórios e cuidados com aquários.
-Seja simpático, direto e use linguagem informal brasileira. Respostas curtas e completas (2-4 frases, sempre termine o raciocínio).
+Seja simpático, direto e use linguagem informal brasileira. Respostas curtas e completas (2-4 frases, sempre termine o raciocínio antes de parar).
 NÃO use formatação Markdown (sem asteriscos, sem negrito, sem listas com traço) - escreva em texto simples corrido.
 Se o cliente quiser comprar ou tiver dúvida sobre disponibilidade/preço específico, direcione para o WhatsApp da loja.
 Se não souber algo com certeza, seja honesto e sugira falar com a equipe pelo WhatsApp.
@@ -42,7 +42,10 @@ Nunca invente preços ou disponibilidade de produtos específicos.`
             parts: [{ text: m.texto }]
           })),
           generationConfig: {
-            maxOutputTokens: 500,
+            maxOutputTokens: 1024,
+            thinkingConfig: {
+              thinkingBudget: 0
+            }
           }
         })
       }
