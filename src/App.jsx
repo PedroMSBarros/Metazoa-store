@@ -7,6 +7,7 @@ import Cuidados from './pages/Cuidados'
 import PeixeDetalhe from './pages/PeixeDetalhe'
 import ProdutoDetalhe from './pages/ProdutoDetalhe'
 import WhatsAppFloat from './components/WhatsAppFloat'
+import ChatBot from './components/ChatBot'
 
 function RedirecionadorHash() {
   const navigate = useNavigate()
@@ -50,6 +51,7 @@ function App() {
         <Route path="/produto/:id" element={<ProdutoDetalhe />} />
       </Routes>
       <WhatsAppFloat />
+      <ChatBot />
     </>
   )
 }
