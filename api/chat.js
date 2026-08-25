@@ -24,9 +24,12 @@ Se o cliente quiser comprar ou tiver dúvida sobre disponibilidade/preço espec�
 Se não souber algo com certeza, seja honesto e sugira falar com a equipe pelo WhatsApp.
 Nunca invente preços ou disponibilidade de produtos específicos.`
 
+  // Usa o alias "latest" para nunca quebrar quando o Google descontinuar uma versão especifica
+  const modelo = 'gemini-flash-latest'
+
   try {
     const resposta = await fetch(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=' + apiKey,
+      `https://generativelanguage.googleapis.com/v1beta/models/${modelo}:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -40,7 +43,6 @@ Nunca invente preços ou disponibilidade de produtos específicos.`
           })),
           generationConfig: {
             maxOutputTokens: 300,
-            temperature: 0.7,
           }
         })
       }
@@ -56,6 +58,7 @@ Nunca invente preços ou disponibilidade de produtos específicos.`
     const textoResposta = dados.candidates?.[0]?.content?.parts?.[0]?.text
 
     if (!textoResposta) {
+      console.error('Resposta sem texto:', JSON.stringify(dados))
       return res.status(502).json({ erro: 'Resposta vazia do assistente' })
     }
 
