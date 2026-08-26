@@ -4,6 +4,7 @@ import { Loader, Search, X } from 'lucide-react'
 import { Link, useSearchParams } from 'react-router-dom'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import ImagemProduto from '../components/ImagemProduto'
 import { supabase } from '../lib/supabase'
 import { trackBusca } from '../lib/analytics'
 
@@ -69,7 +70,6 @@ function Catalogo() {
     setPaginaAtual(1)
   }, [filtro, busca])
 
-  // Rastreia a busca 600ms depois que o usuário para de digitar
   useEffect(() => {
     if (!busca) return
     const timeout = setTimeout(() => {
@@ -192,17 +192,17 @@ function Catalogo() {
                   <div key={item.id + item._tipo} className="animate-fadein" style={{ animationDelay: (i % ITENS_POR_PAGINA) * 0.02 + 's' }}>
                     <Link to={"/" + item._tipo + "/" + item.id} className="bg-white rounded-xl overflow-hidden hover:-translate-y-1 transition-transform duration-300 shadow-sm hover:shadow-md block">
                       <div className="relative aspect-[4/3] overflow-hidden bg-[#E8E3CC]">
-                        <img
+                        <ImagemProduto
                           src={item.imagem_url}
                           alt={item.nome}
-                          loading="lazy"
-                          decoding="async"
-                          className={`w-full h-full object-cover transition-transform duration-500 ${indisponivel ? 'grayscale' : 'hover:scale-105'}`}
+                          prioritaria={i < 6}
+                          indisponivel={indisponivel}
+                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                         />
                         {indisponivel ? (
-                          <span className="absolute top-3 left-3 bg-red-600 text-white text-xs font-medium px-3 py-1 rounded-full">Indisponível</span>
+                          <span className="absolute top-3 left-3 bg-red-600 text-white text-xs font-medium px-3 py-1 rounded-full z-10">Indisponível</span>
                         ) : item.badge ? (
-                          <span className="absolute top-3 left-3 bg-[#5B8C7A] text-white text-xs font-medium px-3 py-1 rounded-full">{item.badge}</span>
+                          <span className="absolute top-3 left-3 bg-[#5B8C7A] text-white text-xs font-medium px-3 py-1 rounded-full z-10">{item.badge}</span>
                         ) : null}
                       </div>
                       <div className="p-5">
