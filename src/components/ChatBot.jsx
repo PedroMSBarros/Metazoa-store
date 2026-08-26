@@ -5,6 +5,7 @@ const LIMITE_MENSAGENS_DIA = 15
 const STORAGE_KEY_CONTADOR = 'metazoa-chat-contador'
 const STORAGE_KEY_DATA = 'metazoa-chat-data'
 const STORAGE_KEY_HISTORICO = 'metazoa-chat-historico'
+const STORAGE_KEY_DICA_VISTA = 'metazoa-chat-dica-vista'
 
 function pegarContadorHoje() {
   const hoje = new Date().toDateString()
@@ -25,6 +26,7 @@ function incrementarContador() {
 
 function ChatBot() {
   const [aberto, setAberto] = useState(false)
+  const [dicaVisivel, setDicaVisivel] = useState(false)
   const [mensagens, setMensagens] = useState(() => {
     try {
       const salvo = sessionStorage.getItem(STORAGE_KEY_HISTORICO)
@@ -37,6 +39,18 @@ function ChatBot() {
   const [carregando, setCarregando] = useState(false)
   const [limiteAtingido, setLimiteAtingido] = useState(() => pegarContadorHoje() >= LIMITE_MENSAGENS_DIA)
   const scrollRef = useRef(null)
+
+  // Mostra a dica automaticamente uma vez por sessão, depois de alguns segundos
+  useEffect(() => {
+    const jaViu = sessionStorage.getItem(STORAGE_KEY_DICA_VISTA)
+    if (!jaViu && !aberto) {
+      const timeout = setTimeout(() => {
+        setDicaVisivel(true)
+        sessionStorage.setItem(STORAGE_KEY_DICA_VISTA, '1')
+      }, 3000)
+      return () => clearTimeout(timeout)
+    }
+  }, [])
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -51,6 +65,11 @@ function ChatBot() {
       // sessionStorage indisponível
     }
   }, [mensagens])
+
+  function abrirChat() {
+    setAberto(true)
+    setDicaVisivel(false)
+  }
 
   async function enviarMensagem(e, textoForcado) {
     if (e) e.preventDefault()
@@ -100,13 +119,32 @@ function ChatBot() {
   return (
     <>
       {!aberto && (
-        <button
-          onClick={() => setAberto(true)}
-          className="fixed bottom-24 right-6 z-50 bg-[#5B8C7A] text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform duration-200"
-          title="Fale com nosso assistente"
-        >
-          <MessageSquare size={24} />
-        </button>
+        <div className="fixed bottom-24 right-6 z-50 flex items-end gap-2">
+
+          {dicaVisivel && (
+            <div className="relative bg-white rounded-2xl rounded-br-sm shadow-lg px-4 py-3 max-w-[220px] mb-1 animate-fadein">
+              <button
+                onClick={() => setDicaVisivel(false)}
+                className="absolute -top-2 -right-2 bg-[#2C1A0E] text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-[#4A3020] transition-colors"
+                aria-label="Fechar dica"
+              >
+                <X size={12} />
+              </button>
+              <p className="text-sm text-[#2C2416] leading-snug">
+                <span className="font-medium">Dúvida sobre alguma espécie? 🐠</span><br />
+                Nosso assistente de IA tira todas as suas dúvidas na hora!
+              </p>
+            </div>
+          )}
+
+          <button
+            onClick={abrirChat}
+            className="bg-[#5B8C7A] text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform duration-200 flex-shrink-0"
+            title="Fale com nosso assistente"
+          >
+            <MessageSquare size={24} />
+          </button>
+        </div>
       )}
 
       {aberto && (
@@ -117,7 +155,7 @@ function ChatBot() {
               <img src="https://i.postimg.cc/Kk3XcgDg/image.png" alt="Metazoa" className="w-8 h-8 rounded-full object-cover" />
               <div>
                 <p className="text-[#C8D4A0] text-sm font-medium">Assistente Metazoa</p>
-                <p className="text-[#C8D4A0]/50 text-xs">Tire suas dúvidas</p>
+                <p className="text-[#C8D4A0]/50 text-xs">Tire suas dúvidas sobre aquarismo</p>
               </div>
             </div>
             <button onClick={() => setAberto(false)} className="text-[#C8D4A0] hover:text-white transition-colors">
@@ -128,7 +166,7 @@ function ChatBot() {
           <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 flex flex-col gap-3 bg-[#F4F1E1]">
             {mensagens.length === 0 && (
               <div className="text-center text-[#7A6A52] text-sm mt-6 px-4">
-                🐠 Oi! Posso te ajudar com dúvidas sobre peixes, cuidados com aquário ou nossos produtos. Manda sua pergunta!
+                🐠 Oi! Sou o assistente de IA da Metazoa. Posso te ajudar com dúvidas sobre espécies, cuidados com aquário ou nossos produtos. Manda sua pergunta!
               </div>
             )}
             {mensagens.map((msg, i) => (
