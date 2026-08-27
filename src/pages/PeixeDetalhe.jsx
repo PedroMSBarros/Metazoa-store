@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowLeft, MessageCircle, ShoppingCart, Thermometer, Droplets, Fish, Clock, XCircle } from 'lucide-react'
+import { ArrowLeft, MessageCircle, ShoppingCart, Thermometer, Droplets, Fish, Clock, XCircle, Minus, Plus } from 'lucide-react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { supabase } from '../lib/supabase'
@@ -14,6 +14,7 @@ function PeixeDetalhe() {
   const [peixe, setPeixe] = useState(null)
   const [carregando, setCarregando] = useState(true)
   const [adicionado, setAdicionado] = useState(false)
+  const [quantidade, setQuantidade] = useState(1)
   const { adicionarItem } = useCart()
 
   useEffect(() => {
@@ -29,9 +30,10 @@ function PeixeDetalhe() {
   }, [id])
 
   function handleAdicionarCarrinho() {
-    adicionarItem({ ...peixe, _tipo: 'peixe' })
+    adicionarItem({ ...peixe, _tipo: 'peixe' }, quantidade)
     trackAdicionarCarrinho(peixe)
     setAdicionado(true)
+    setQuantidade(1)
     setTimeout(() => setAdicionado(false), 2000)
   }
 
@@ -131,11 +133,34 @@ function PeixeDetalhe() {
               </div>
             )}
 
+            {!indisponivel && (
+              <div className="flex items-center gap-4 mb-4">
+                <span className="text-sm text-[#7A6A52] font-medium">Quantidade</span>
+                <div className="flex items-center gap-3 bg-white border border-[#D9D2B0] rounded-full px-2 py-1">
+                  <button
+                    onClick={() => setQuantidade(q => Math.max(1, q - 1))}
+                    className="w-8 h-8 rounded-full flex items-center justify-center text-[#6B5B3E] hover:bg-[#F4F1E1] transition-colors"
+                    aria-label="Diminuir quantidade"
+                  >
+                    <Minus size={16} />
+                  </button>
+                  <span className="text-base font-medium text-[#2C2416] w-6 text-center">{quantidade}</span>
+                  <button
+                    onClick={() => setQuantidade(q => q + 1)}
+                    className="w-8 h-8 rounded-full flex items-center justify-center text-[#6B5B3E] hover:bg-[#F4F1E1] transition-colors"
+                    aria-label="Aumentar quantidade"
+                  >
+                    <Plus size={16} />
+                  </button>
+                </div>
+              </div>
+            )}
+
             <div className="flex flex-col gap-3">
               {!indisponivel && (
                 <button onClick={handleAdicionarCarrinho} className={`px-6 py-4 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors ${adicionado ? 'bg-[#4A8C1C] text-white' : 'bg-[#6B5B3E] text-white hover:bg-[#2C2416]'}`}>
                   <ShoppingCart size={20} />
-                  {adicionado ? '✓ Adicionado ao carrinho!' : 'Adicionar ao carrinho'}
+                  {adicionado ? '✓ Adicionado ao carrinho!' : `Adicionar ${quantidade > 1 ? quantidade + ' ao carrinho' : 'ao carrinho'}`}
                 </button>
               )}
               <a href={"https://wa.me/5511971526750?text=" + encodeURIComponent(msgWhatsApp)} target="_blank" rel="noreferrer" onClick={handleCliqueWhatsApp} className={indisponivel ? "bg-[#6B5B3E] text-white px-6 py-4 rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-[#2C2416] transition-colors" : "border border-[#9C8A6A] text-[#6B5B3E] px-6 py-4 rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-[#6B5B3E] hover:text-white transition-colors"}>
