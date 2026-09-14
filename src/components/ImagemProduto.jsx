@@ -1,10 +1,12 @@
 import { useState } from 'react'
+import { otimizarImagem } from '../lib/imagem'
 
-// Componente de imagem com skeleton de carregamento
-// Evita a sensação de "travado" enquanto a foto ainda não chegou
-function ImagemProduto({ src, alt, className, prioritaria = false, indisponivel = false }) {
+// Componente de imagem com skeleton de carregamento + otimização automática
+function ImagemProduto({ src, alt, className, prioritaria = false, indisponivel = false, largura = 500 }) {
   const [carregada, setCarregada] = useState(false)
   const [erro, setErro] = useState(false)
+
+  const srcOtimizado = otimizarImagem(src, largura)
 
   return (
     <div className="relative w-full h-full">
@@ -17,7 +19,7 @@ function ImagemProduto({ src, alt, className, prioritaria = false, indisponivel 
         </div>
       ) : (
         <img
-          src={src}
+          src={srcOtimizado}
           alt={alt}
           loading={prioritaria ? 'eager' : 'lazy'}
           fetchpriority={prioritaria ? 'high' : 'auto'}

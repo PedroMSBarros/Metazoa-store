@@ -6,6 +6,7 @@ import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { supabase } from '../lib/supabase'
 import { useCart } from '../components/CartContext'
+import { otimizarImagem } from '../lib/imagem'
 import { trackVisualizacaoPeixe, trackCliqueWhatsApp, trackAdicionarCarrinho } from '../lib/analytics'
 
 function PeixeDetalhe() {
@@ -90,7 +91,7 @@ function PeixeDetalhe() {
 
           <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }}>
             <div className="relative rounded-2xl overflow-hidden aspect-square bg-[#E8E3CC]">
-              <img src={peixe.imagem_url} alt={peixe.nome} className={`w-full h-full object-cover ${indisponivel ? 'grayscale' : ''}`} />
+              <img src={otimizarImagem(peixe.imagem_url, 700)} alt={peixe.nome} loading="eager" fetchpriority="high" className={`w-full h-full object-cover ${indisponivel ? 'grayscale' : ''}`} />
               {indisponivel ? (
                 <span className="absolute top-4 left-4 bg-red-600 text-white text-xs font-medium px-3 py-1 rounded-full">Indisponível</span>
               ) : peixe.badge ? (

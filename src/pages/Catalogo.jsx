@@ -197,6 +197,7 @@ function Catalogo() {
                           alt={item.nome}
                           prioritaria={i < 6}
                           indisponivel={indisponivel}
+                          largura={450}
                           className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                         />
                         {indisponivel ? (
