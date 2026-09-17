@@ -6,7 +6,7 @@ import Header from '../components/Header'
 import Footer from '../components/Footer'
 import ImagemProduto from '../components/ImagemProduto'
 import { supabase } from '../lib/supabase'
-import { normalizar } from '../lib/useBuscaSugestoes'
+import { buscarFuzzy } from '../lib/fuzzySearch'
 import { trackBusca } from '../lib/analytics'
 
 const categoriasPeixes = [
@@ -103,23 +103,17 @@ function Catalogo() {
     ...produtos.map(p => ({ ...p, _tipo: 'produto' }))
   ]
 
-  const termoBuscaNormalizado = normalizar(busca)
+  const termoBuscaTrim = busca.trim()
 
-  const itensFiltrados = todosItens
-    .filter(item => {
+  const itensFiltrados = (() => {
+    const filtradosPorCategoria = todosItens.filter(item => {
       if (filtro === 'Todos') return true
       if (filtro === 'Agua Doce') return aguaDoceValues.includes(item.categoria)
       return item.categoria === filtro
     })
-    .filter(item => {
-      if (!termoBuscaNormalizado) return true
-      return (
-        normalizar(item.nome).includes(termoBuscaNormalizado) ||
-        normalizar(item.nome_cientifico).includes(termoBuscaNormalizado) ||
-        normalizar(item.descricao).includes(termoBuscaNormalizado) ||
-        normalizar(item.categoria).includes(termoBuscaNormalizado)
-      )
-    })
+    if (!termoBuscaTrim) return filtradosPorCategoria
+    return buscarFuzzy(filtradosPorCategoria, termoBuscaTrim)
+  })()
 
   const itensVisiveis = itensFiltrados.slice(0, paginaAtual * ITENS_POR_PAGINA)
   const temMais = itensVisiveis.length < itensFiltrados.length
