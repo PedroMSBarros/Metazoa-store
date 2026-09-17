@@ -119,7 +119,7 @@ function ChatBot() {
   return (
     <>
       {!aberto && (
-        <div className="fixed bottom-24 right-6 z-50 flex items-end gap-2">
+        <div className="fixed right-6 z-50 flex items-end gap-2" style={{ bottom: 'calc(6rem + env(safe-area-inset-bottom, 0px))' }}>
 
           {dicaVisivel && (
             <div className="relative bg-white rounded-2xl rounded-br-sm shadow-lg px-4 py-3 max-w-[220px] mb-1 animate-fadein">
@@ -148,7 +148,7 @@ function ChatBot() {
       )}
 
       {aberto && (
-        <div className="fixed bottom-6 right-6 z-50 w-[calc(100vw-3rem)] max-w-sm h-[500px] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-[#D9D2B0]">
+        <div className="fixed right-6 z-50 w-[calc(100vw-3rem)] max-w-sm h-[min(500px,75vh)] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-[#D9D2B0]" style={{ bottom: 'calc(1.5rem + env(safe-area-inset-bottom, 0px))' }}>
 
           <div className="bg-[#2C1A0E] px-5 py-4 flex items-center justify-between flex-shrink-0">
             <div className="flex items-center gap-2">

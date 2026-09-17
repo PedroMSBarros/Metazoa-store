@@ -6,6 +6,7 @@ import Header from '../components/Header'
 import Footer from '../components/Footer'
 import ImagemProduto from '../components/ImagemProduto'
 import { supabase } from '../lib/supabase'
+import { normalizar } from '../lib/useBuscaSugestoes'
 import { trackBusca } from '../lib/analytics'
 
 const categoriasPeixes = [
@@ -14,22 +15,40 @@ const categoriasPeixes = [
 ]
 
 const subcategorias = [
-  { label: 'Todos Agua Doce', value: 'Agua Doce' },
+  { label: 'Todos Água Doce', value: 'Agua Doce' },
   { label: 'Primitivos', value: 'Primitivos' },
   { label: 'Amazônicos', value: 'Amazônicos' },
   { label: 'Variados', value: 'Variados' },
   { label: 'Jumbos', value: 'Jumbos' },
   { label: 'Cascudos', value: 'Cascudos' },
   { label: 'Ciclídeos Africanos', value: 'Ciclídeos Africanos' },
+  { label: 'Betta', value: 'Betta' },
+  { label: 'Ovovíparos', value: 'Ovovíparos' },
+  { label: 'Kinguios & Carpas', value: 'Kinguios & Carpas' },
 ]
 
 const categoriasProdutos = [
-  { label: 'Acessorios', value: 'Acessorios' },
-  { label: 'Outros', value: 'Outros' },
+  { label: 'Filtros', value: 'Filtros' },
+  { label: 'Acessórios', value: 'Acessórios' },
+  { label: 'Peças de Reposição', value: 'Peças de Reposição' },
+  { label: 'Bombas de Circulação', value: 'Bombas de Circulação' },
+  { label: 'Bombas de Recalque', value: 'Bombas de Recalque' },
+  { label: 'Decoração (Aquascape)', value: 'Decoração (Aquascape)' },
+  { label: 'Suplementos', value: 'Suplementos' },
+  { label: 'Compressores de Ar', value: 'Compressores de Ar' },
+  { label: 'Termostatos', value: 'Termostatos' },
+  { label: 'Resfriadores', value: 'Resfriadores' },
+  { label: 'Wavemakers', value: 'Wavemakers' },
+  { label: 'Luminárias', value: 'Luminárias' },
+  { label: 'Sal Marinho', value: 'Sal Marinho' },
+  { label: 'Alimentadores Automáticos', value: 'Alimentadores Automáticos' },
+  { label: 'Alimentos Vivos', value: 'Alimentos Vivos' },
+  { label: 'Ferramentas p/ Corais', value: 'Ferramentas p/ Corais' },
+  { label: 'Reposição de Água (ATO)', value: 'Reposição de Água (ATO)' },
+  { label: 'Medidores', value: 'Medidores' },
 ]
 
-const aguaDoceValues = ['Agua Doce', 'Primitivos', 'Amazônicos', 'Variados', 'Jumbos', 'Cascudos', 'Ciclídeos Africanos']
-const produtosValues = ['Acessorios', 'Outros']
+const aguaDoceValues = ['Agua Doce', 'Primitivos', 'Amazônicos', 'Variados', 'Jumbos', 'Cascudos', 'Ciclídeos Africanos', 'Betta', 'Ovovíparos', 'Kinguios & Carpas']
 
 const ITENS_POR_PAGINA = 24
 
@@ -39,6 +58,7 @@ function Catalogo() {
   const [carregando, setCarregando] = useState(true)
   const [filtro, setFiltro] = useState('Todos')
   const [mostrarAguaDoce, setMostrarAguaDoce] = useState(false)
+  const [mostrarProdutos, setMostrarProdutos] = useState(false)
   const [busca, setBusca] = useState('')
   const [paginaAtual, setPaginaAtual] = useState(1)
   const [searchParams] = useSearchParams()
@@ -83,6 +103,8 @@ function Catalogo() {
     ...produtos.map(p => ({ ...p, _tipo: 'produto' }))
   ]
 
+  const termoBuscaNormalizado = normalizar(busca)
+
   const itensFiltrados = todosItens
     .filter(item => {
       if (filtro === 'Todos') return true
@@ -90,13 +112,12 @@ function Catalogo() {
       return item.categoria === filtro
     })
     .filter(item => {
-      if (!busca) return true
-      const termo = busca.toLowerCase()
+      if (!termoBuscaNormalizado) return true
       return (
-        item.nome?.toLowerCase().includes(termo) ||
-        item.nome_cientifico?.toLowerCase().includes(termo) ||
-        item.descricao?.toLowerCase().includes(termo) ||
-        item.categoria?.toLowerCase().includes(termo)
+        normalizar(item.nome).includes(termoBuscaNormalizado) ||
+        normalizar(item.nome_cientifico).includes(termoBuscaNormalizado) ||
+        normalizar(item.descricao).includes(termoBuscaNormalizado) ||
+        normalizar(item.categoria).includes(termoBuscaNormalizado)
       )
     })
 
@@ -134,31 +155,39 @@ function Catalogo() {
         </motion.div>
 
         <div className="mb-6">
-          <div className="flex gap-3 flex-wrap">
-            <button onClick={() => { handleFiltro('Todos'); setMostrarAguaDoce(false) }} className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${filtro === 'Todos' ? 'bg-[#5B8C7A] text-white' : 'bg-white text-[#6B5B3E] hover:bg-[#5B8C7A] hover:text-white'}`}>
+          <div className="flex gap-3 overflow-x-auto pb-2 -mx-6 px-6 md:overflow-visible md:flex-wrap md:mx-0 md:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <button onClick={() => { handleFiltro('Todos'); setMostrarAguaDoce(false); setMostrarProdutos(false) }} className={`px-4 py-2 rounded-full text-sm font-medium transition-colors flex-shrink-0 ${filtro === 'Todos' ? 'bg-[#5B8C7A] text-white' : 'bg-white text-[#6B5B3E] hover:bg-[#5B8C7A] hover:text-white'}`}>
               Todos
             </button>
-            <button onClick={() => { setMostrarAguaDoce(!mostrarAguaDoce); handleFiltro('Agua Doce') }} className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${aguaDoceValues.includes(filtro) ? 'bg-[#5B8C7A] text-white' : 'bg-white text-[#6B5B3E] hover:bg-[#5B8C7A] hover:text-white'}`}>
-              Agua Doce ▾
+            <button onClick={() => { setMostrarAguaDoce(!mostrarAguaDoce); setMostrarProdutos(false); handleFiltro('Agua Doce') }} className={`px-4 py-2 rounded-full text-sm font-medium transition-colors flex-shrink-0 ${aguaDoceValues.includes(filtro) ? 'bg-[#5B8C7A] text-white' : 'bg-white text-[#6B5B3E] hover:bg-[#5B8C7A] hover:text-white'}`}>
+              Água Doce ▾
             </button>
             {categoriasPeixes.map(cat => (
-              <button key={cat.value} onClick={() => handleFiltro(cat.value)} className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${filtro === cat.value ? 'bg-[#5B8C7A] text-white' : 'bg-white text-[#6B5B3E] hover:bg-[#5B8C7A] hover:text-white'}`}>
+              <button key={cat.value} onClick={() => { handleFiltro(cat.value); setMostrarProdutos(false) }} className={`px-4 py-2 rounded-full text-sm font-medium transition-colors flex-shrink-0 ${filtro === cat.value ? 'bg-[#5B8C7A] text-white' : 'bg-white text-[#6B5B3E] hover:bg-[#5B8C7A] hover:text-white'}`}>
                 {cat.label}
               </button>
             ))}
-            <span className="w-px bg-[#D9D2B0] self-stretch"></span>
-            {categoriasProdutos.map(cat => (
-              <button key={cat.value} onClick={() => handleFiltro(cat.value)} className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${filtro === cat.value ? 'bg-[#6B5B3E] text-white' : 'bg-white text-[#6B5B3E] hover:bg-[#6B5B3E] hover:text-white'}`}>
-                {cat.label}
-              </button>
-            ))}
+            <span className="w-px bg-[#D9D2B0] self-stretch flex-shrink-0"></span>
+            <button onClick={() => { setMostrarProdutos(!mostrarProdutos); setMostrarAguaDoce(false) }} className={`px-4 py-2 rounded-full text-sm font-medium transition-colors flex-shrink-0 whitespace-nowrap ${categoriasProdutos.some(c => c.value === filtro) ? 'bg-[#6B5B3E] text-white' : 'bg-white text-[#6B5B3E] hover:bg-[#6B5B3E] hover:text-white'}`}>
+              Produtos & Acessórios ▾
+            </button>
           </div>
 
           {mostrarAguaDoce && (
-            <motion.div className="flex gap-3 flex-wrap mt-3 pl-4 border-l-2 border-[#5B8C7A]" initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
+            <motion.div className="flex gap-2 overflow-x-auto pb-2 -mx-6 px-6 md:overflow-visible md:flex-wrap md:mx-0 md:px-0 mt-3 md:pl-4 md:border-l-2 border-[#5B8C7A] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
               {subcategorias.map(sub => (
-                <button key={sub.value} onClick={() => setFiltro(sub.value)} className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${filtro === sub.value ? 'bg-[#3D6B5A] text-white' : 'bg-[#E8E3CC] text-[#6B5B3E] hover:bg-[#3D6B5A] hover:text-white'}`}>
+                <button key={sub.value} onClick={() => setFiltro(sub.value)} className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors flex-shrink-0 whitespace-nowrap ${filtro === sub.value ? 'bg-[#3D6B5A] text-white' : 'bg-[#E8E3CC] text-[#6B5B3E] hover:bg-[#3D6B5A] hover:text-white'}`}>
                   {sub.label}
+                </button>
+              ))}
+            </motion.div>
+          )}
+
+          {mostrarProdutos && (
+            <motion.div className="flex gap-2 overflow-x-auto pb-2 -mx-6 px-6 md:overflow-visible md:flex-wrap md:mx-0 md:px-0 mt-3 md:pl-4 md:border-l-2 border-[#6B5B3E] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
+              {categoriasProdutos.map(cat => (
+                <button key={cat.value} onClick={() => handleFiltro(cat.value)} className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors flex-shrink-0 whitespace-nowrap ${filtro === cat.value ? 'bg-[#6B5B3E] text-white' : 'bg-[#E8E3CC] text-[#6B5B3E] hover:bg-[#6B5B3E] hover:text-white'}`}>
+                  {cat.label}
                 </button>
               ))}
             </motion.div>
