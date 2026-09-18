@@ -10,8 +10,13 @@ function Destaques() {
 
   useEffect(() => {
     async function buscarPeixes() {
-      const { data, error } = await supabase.from('peixes').select('*').order('criado_em', { ascending: false }).limit(6)
-      if (!error) setPeixes(data)
+      const { data, error } = await supabase.from('peixes').select('*').order('criado_em', { ascending: false }).limit(12)
+      if (!error) {
+        // Prioriza disponiveis; so mostra indisponivel se nao houver 6 disponiveis suficientes
+        const disponiveis = data.filter(p => p.disponivel !== false)
+        const indisponiveis = data.filter(p => p.disponivel === false)
+        setPeixes([...disponiveis, ...indisponiveis].slice(0, 6))
+      }
       setCarregando(false)
     }
     buscarPeixes()

@@ -27,7 +27,10 @@ const subcategorias = [
   { label: 'Kinguios & Carpas', value: 'Kinguios & Carpas' },
 ]
 
+const produtosValues = ['Filtros', 'Acessórios', 'Peças de Reposição', 'Bombas de Circulação', 'Bombas de Recalque', 'Decoração (Aquascape)', 'Suplementos', 'Compressores de Ar', 'Termostatos', 'Resfriadores', 'Wavemakers', 'Luminárias', 'Sal Marinho', 'Alimentadores Automáticos', 'Alimentos Vivos', 'Ferramentas p/ Corais', 'Reposição de Água (ATO)', 'Medidores']
+
 const categoriasProdutos = [
+  { label: 'Tudo', value: 'Produtos' },
   { label: 'Filtros', value: 'Filtros' },
   { label: 'Acessórios', value: 'Acessórios' },
   { label: 'Peças de Reposição', value: 'Peças de Reposição' },
@@ -109,10 +112,19 @@ function Catalogo() {
     const filtradosPorCategoria = todosItens.filter(item => {
       if (filtro === 'Todos') return true
       if (filtro === 'Agua Doce') return aguaDoceValues.includes(item.categoria)
+      if (filtro === 'Produtos') return produtosValues.includes(item.categoria)
       return item.categoria === filtro
     })
-    if (!termoBuscaTrim) return filtradosPorCategoria
-    return buscarFuzzy(filtradosPorCategoria, termoBuscaTrim)
+    const resultado = termoBuscaTrim ? buscarFuzzy(filtradosPorCategoria, termoBuscaTrim) : filtradosPorCategoria
+
+    // Indisponiveis sempre no final, mantendo a ordem original (alfabetica ou por
+    // relevancia de busca) entre os itens de cada grupo
+    return [...resultado].sort((a, b) => {
+      const aIndisponivel = a.disponivel === false
+      const bIndisponivel = b.disponivel === false
+      if (aIndisponivel === bIndisponivel) return 0
+      return aIndisponivel ? 1 : -1
+    })
   })()
 
   const itensVisiveis = itensFiltrados.slice(0, paginaAtual * ITENS_POR_PAGINA)
@@ -162,7 +174,7 @@ function Catalogo() {
               </button>
             ))}
             <span className="w-px bg-[#D9D2B0] self-stretch flex-shrink-0"></span>
-            <button onClick={() => { setMostrarProdutos(!mostrarProdutos); setMostrarAguaDoce(false) }} className={`px-4 py-2 rounded-full text-sm font-medium transition-colors flex-shrink-0 whitespace-nowrap ${categoriasProdutos.some(c => c.value === filtro) ? 'bg-[#6B5B3E] text-white' : 'bg-white text-[#6B5B3E] hover:bg-[#6B5B3E] hover:text-white'}`}>
+            <button onClick={() => { setMostrarProdutos(!mostrarProdutos); setMostrarAguaDoce(false); handleFiltro('Produtos') }} className={`px-4 py-2 rounded-full text-sm font-medium transition-colors flex-shrink-0 whitespace-nowrap ${categoriasProdutos.some(c => c.value === filtro) ? 'bg-[#6B5B3E] text-white' : 'bg-white text-[#6B5B3E] hover:bg-[#6B5B3E] hover:text-white'}`}>
               Produtos & Acessórios ▾
             </button>
           </div>
