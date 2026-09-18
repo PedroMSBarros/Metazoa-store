@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.99.1",
+    "cloudinary": "^2.11.0",
     "framer-motion": "^12.36.0",
     "fuse.js": "^7.5.0",
     "lucide-react": "^0.577.0",
