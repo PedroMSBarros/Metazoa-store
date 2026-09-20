@@ -233,7 +233,7 @@ function Catalogo() {
                           prioritaria={i < 6}
                           indisponivel={indisponivel}
                           largura={450}
-                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                          className="w-full h-full object-contain hover:scale-105 transition-transform duration-500"
                         />
                         {indisponivel ? (
                           <span className="absolute top-3 left-3 bg-red-600 text-white text-xs font-medium px-3 py-1 rounded-full z-10">Indisponível</span>

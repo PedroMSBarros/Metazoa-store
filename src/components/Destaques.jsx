@@ -64,7 +64,7 @@ function Destaques() {
                       alt={peixe.nome}
                       prioritaria={i < 3}
                       largura={450}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-contain hover:scale-105 transition-transform duration-500"
                     />
                     {peixe.badge && (
                       <span className="absolute top-3 left-3 bg-[#5B8C7A] text-white text-xs font-medium px-3 py-1 rounded-full z-10">{peixe.badge}</span>
