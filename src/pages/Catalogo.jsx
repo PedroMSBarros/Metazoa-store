@@ -27,7 +27,7 @@ const subcategorias = [
   { label: 'Kinguios & Carpas', value: 'Kinguios & Carpas' },
 ]
 
-const produtosValues = ['Filtros', 'Acessórios', 'Peças de Reposição', 'Bombas de Circulação', 'Bombas de Recalque', 'Decoração (Aquascape)', 'Suplementos', 'Compressores de Ar', 'Termostatos', 'Resfriadores', 'Wavemakers', 'Luminárias', 'Sal Marinho', 'Alimentadores Automáticos', 'Alimentos Vivos', 'Ferramentas p/ Corais', 'Reposição de Água (ATO)', 'Medidores']
+const produtosValues = ['Filtros', 'Acessórios', 'Peças de Reposição', 'Bombas de Circulação', 'Bombas de Recalque', 'Decoração (Aquascape)', 'Suplementos', 'Compressores de Ar', 'Termostatos', 'Resfriadores', 'Wavemakers', 'Luminárias', 'Sal Marinho', 'Alimentadores Automáticos', 'Alimentos Vivos', 'Ferramentas p/ Corais', 'Reposição de Água (ATO)', 'Medidores', 'Terrários', 'Substratos', 'Rações', 'Skimmers', 'Aquários']
 
 const categoriasProdutos = [
   { label: 'Tudo', value: 'Produtos' },
@@ -49,6 +49,11 @@ const categoriasProdutos = [
   { label: 'Ferramentas p/ Corais', value: 'Ferramentas p/ Corais' },
   { label: 'Reposição de Água (ATO)', value: 'Reposição de Água (ATO)' },
   { label: 'Medidores', value: 'Medidores' },
+  { label: 'Terrários', value: 'Terrários' },
+  { label: 'Substratos', value: 'Substratos' },
+  { label: 'Rações', value: 'Rações' },
+  { label: 'Skimmers', value: 'Skimmers' },
+  { label: 'Aquários', value: 'Aquários' },
 ]
 
 const aguaDoceValues = ['Agua Doce', 'Primitivos', 'Amazônicos', 'Variados', 'Jumbos', 'Cascudos', 'Ciclídeos Africanos', 'Betta', 'Ovovíparos', 'Kinguios & Carpas']
