@@ -73,6 +73,7 @@ function Catalogo() {
     if (categoriaParam) {
       setFiltro(categoriaParam)
       if (aguaDoceValues.includes(categoriaParam)) setMostrarAguaDoce(true)
+      if (categoriaParam === 'Produtos' || produtosValues.includes(categoriaParam)) setMostrarProdutos(true)
     }
   }, [searchParams])
 

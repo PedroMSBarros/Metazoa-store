@@ -30,7 +30,7 @@ const categorias = [
     icon: '⚙️',
     nome: 'Acessórios',
     quantidade: 'Filtros, luzes e mais',
-    filtro: 'Acessorios',
+    filtro: 'Produtos',
     video: 'https://www.youtube.com/embed/ySY_FhzPi14?autoplay=1&mute=1&loop=1&playlist=ySY_FhzPi14&controls=0&playsinline=1',
     img: 'https://i.postimg.cc/hvwY0ZB9/equip.png'
   },
