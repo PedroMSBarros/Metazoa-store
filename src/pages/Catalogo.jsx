@@ -60,6 +60,31 @@ const aguaDoceValues = ['Agua Doce', 'Primitivos', 'Amazônicos', 'Variados', 'J
 
 const ITENS_POR_PAGINA = 24
 
+function parsePreco(preco) {
+  if (!preco) return 0
+  const limpo = String(preco).replace(/[^\d,]/g, '').replace(',', '.')
+  return parseFloat(limpo) || 0
+}
+
+function ordenarItens(itens, criterio) {
+  const copia = [...itens]
+  switch (criterio) {
+    case 'menor-preco':
+      return copia.sort((a, b) => parsePreco(a.preco) - parsePreco(b.preco))
+    case 'maior-preco':
+      return copia.sort((a, b) => parsePreco(b.preco) - parsePreco(a.preco))
+    case 'az':
+      return copia.sort((a, b) => (a.nome || '').localeCompare(b.nome || '', 'pt-BR'))
+    case 'marca':
+      return copia.sort((a, b) =>
+        (a.marca || 'zzz').localeCompare(b.marca || 'zzz', 'pt-BR') ||
+        (a.nome || '').localeCompare(b.nome || '', 'pt-BR')
+      )
+    default:
+      return copia
+  }
+}
+
 function Catalogo() {
   const [peixes, setPeixes] = useState([])
   const [produtos, setProdutos] = useState([])
@@ -68,6 +93,7 @@ function Catalogo() {
   const [mostrarAguaDoce, setMostrarAguaDoce] = useState(false)
   const [mostrarProdutos, setMostrarProdutos] = useState(false)
   const [busca, setBusca] = useState('')
+  const [ordenacao, setOrdenacao] = useState('padrao')
   const [paginaAtual, setPaginaAtual] = useState(1)
   const [searchParams] = useSearchParams()
 
@@ -97,7 +123,7 @@ function Catalogo() {
 
   useEffect(() => {
     setPaginaAtual(1)
-  }, [filtro, busca])
+  }, [filtro, busca, ordenacao])
 
   useEffect(() => {
     if (!busca) return
@@ -115,17 +141,18 @@ function Catalogo() {
   const termoBuscaTrim = busca.trim()
 
   const itensFiltrados = (() => {
-    const filtradosPorCategoria = todosItens.filter(item => {
+    // Enquanto o cliente esta buscando, ignora a categoria selecionada e olha tudo
+    const baseParaFiltrar = termoBuscaTrim ? todosItens : todosItens.filter(item => {
       if (filtro === 'Todos') return true
       if (filtro === 'Agua Doce') return aguaDoceValues.includes(item.categoria)
       if (filtro === 'Produtos') return produtosValues.includes(item.categoria)
       return item.categoria === filtro
     })
-    const resultado = termoBuscaTrim ? buscarFuzzy(filtradosPorCategoria, termoBuscaTrim) : filtradosPorCategoria
+    const resultado = termoBuscaTrim ? buscarFuzzy(baseParaFiltrar, termoBuscaTrim) : baseParaFiltrar
+    const ordenado = ordenarItens(resultado, ordenacao)
 
-    // Indisponiveis sempre no final, mantendo a ordem original (alfabetica ou por
-    // relevancia de busca) entre os itens de cada grupo
-    return [...resultado].sort((a, b) => {
+    // Indisponiveis sempre no final, mantendo a ordem definida acima entre os itens de cada grupo
+    return [...ordenado].sort((a, b) => {
       const aIndisponivel = a.disponivel === false
       const bIndisponivel = b.disponivel === false
       if (aIndisponivel === bIndisponivel) return 0
@@ -158,7 +185,21 @@ function Catalogo() {
 
         <motion.div className="relative mb-8" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 }}>
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#9C8A6A]" size={18} />
-          <input type="text" placeholder="Buscar peixe, produto ou categoria..." value={busca} onChange={e => setBusca(e.target.value)} className="w-full bg-white border border-[#D9D2B0] rounded-xl pl-11 pr-10 py-3 text-sm text-[#2C2416] placeholder-[#9C8A6A] focus:outline-none focus:border-[#5B8C7A] transition-colors" />
+          <input
+            type="text"
+            placeholder="Buscar peixe, produto ou categoria..."
+            value={busca}
+            onChange={e => {
+              const valor = e.target.value
+              setBusca(valor)
+              if (valor.trim() && filtro !== 'Todos') {
+                setFiltro('Todos')
+                setMostrarAguaDoce(false)
+                setMostrarProdutos(false)
+              }
+            }}
+            className="w-full bg-white border border-[#D9D2B0] rounded-xl pl-11 pr-10 py-3 text-sm text-[#2C2416] placeholder-[#9C8A6A] focus:outline-none focus:border-[#5B8C7A] transition-colors"
+          />
           {busca && (
             <button onClick={() => setBusca('')} className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9C8A6A] hover:text-[#2C2416] transition-colors">
               <X size={16} />
@@ -206,13 +247,27 @@ function Catalogo() {
           )}
         </div>
 
-        <p className="text-sm text-[#7A6A52] mb-6">
-          {busca ? (
-            <>{itensFiltrados.length} resultado{itensFiltrados.length !== 1 ? 's' : ''} para <span className="font-medium text-[#2C2416]">"{busca}"</span></>
-          ) : (
-            <>Mostrando {itensVisiveis.length} de {itensFiltrados.length} produtos</>
-          )}
-        </p>
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+          <p className="text-sm text-[#7A6A52]">
+            {busca ? (
+              <>{itensFiltrados.length} resultado{itensFiltrados.length !== 1 ? 's' : ''} para <span className="font-medium text-[#2C2416]">"{busca}"</span></>
+            ) : (
+              <>Mostrando {itensVisiveis.length} de {itensFiltrados.length} produtos</>
+            )}
+          </p>
+
+          <select
+            value={ordenacao}
+            onChange={e => setOrdenacao(e.target.value)}
+            className="bg-white border border-[#D9D2B0] rounded-full px-4 py-2 text-sm text-[#6B5B3E] focus:outline-none focus:border-[#5B8C7A] cursor-pointer"
+          >
+            <option value="padrao">Ordenar por</option>
+            <option value="az">Nome A-Z</option>
+            <option value="menor-preco">Menor preço</option>
+            <option value="maior-preco">Maior preço</option>
+            <option value="marca">Marca</option>
+          </select>
+        </div>
 
         {carregando ? (
           <div className="flex justify-center items-center py-20">
