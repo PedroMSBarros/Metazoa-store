@@ -2,7 +2,20 @@ import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import ImagemProduto from './ImagemProduto'
+import CarrosselCards from './CarrosselCards'
 import { supabase } from '../lib/supabase'
+
+const TAMANHO_POOL = 40
+const QTD_NOVIDADE = 8
+
+function embaralhar(lista) {
+  const copia = [...lista]
+  for (let i = copia.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[copia[i], copia[j]] = [copia[j], copia[i]]
+  }
+  return copia
+}
 
 function Destaques() {
   const [peixes, setPeixes] = useState([])
@@ -10,12 +23,16 @@ function Destaques() {
 
   useEffect(() => {
     async function buscarPeixes() {
-      const { data, error } = await supabase.from('peixes').select('*').order('criado_em', { ascending: false }).limit(12)
-      if (!error) {
-        // Prioriza disponiveis; so mostra indisponivel se nao houver 6 disponiveis suficientes
+      const { data, error } = await supabase
+        .from('peixes')
+        .select('*')
+        .order('criado_em', { ascending: false })
+        .limit(TAMANHO_POOL)
+
+      if (!error && data) {
         const disponiveis = data.filter(p => p.disponivel !== false)
-        const indisponiveis = data.filter(p => p.disponivel === false)
-        setPeixes([...disponiveis, ...indisponiveis].slice(0, 6))
+        const comNovidade = disponiveis.map((p, i) => ({ ...p, _novidade: i < QTD_NOVIDADE }))
+        setPeixes(embaralhar(comNovidade))
       }
       setCarregando(false)
     }
@@ -54,35 +71,35 @@ function Destaques() {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {peixes.map((peixe, i) => (
-              <motion.div key={peixe.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.1 }}>
-                <Link to={"/peixe/" + peixe.id} className="bg-white rounded-xl overflow-hidden hover:-translate-y-1 transition-transform duration-300 shadow-sm hover:shadow-md block">
-                  <div className="relative aspect-[4/3] overflow-hidden bg-[#E8E3CC]">
-                    <ImagemProduto
-                      src={peixe.imagem_url}
-                      alt={peixe.nome}
-                      prioritaria={i < 3}
-                      largura={450}
-                      className="w-full h-full object-contain hover:scale-105 transition-transform duration-500"
-                    />
-                    {peixe.badge && (
-                      <span className="absolute top-3 left-3 bg-[#5B8C7A] text-white text-xs font-medium px-3 py-1 rounded-full z-10">{peixe.badge}</span>
-                    )}
+          <CarrosselCards
+            itens={peixes}
+            intervalo={2500}
+            corSeta="bg-white"
+            renderItem={(peixe) => (
+              <Link to={"/peixe/" + peixe.id} className="bg-white rounded-xl overflow-hidden hover:-translate-y-1 transition-transform duration-300 shadow-sm hover:shadow-md block h-full">
+                <div className="relative aspect-[4/3] overflow-hidden bg-[#E8E3CC]">
+                  <ImagemProduto
+                    src={peixe.imagem_url}
+                    alt={peixe.nome}
+                    largura={450}
+                    className="w-full h-full object-contain hover:scale-105 transition-transform duration-500"
+                  />
+                  {peixe._novidade && (
+                    <span className="absolute top-3 left-3 bg-[#5B8C7A] text-white text-xs font-medium px-3 py-1 rounded-full z-10">Novidade</span>
+                  )}
+                </div>
+                <div className="p-5">
+                  <span className="text-xs font-medium tracking-widest uppercase text-[#9C8A6A] block mb-1">{peixe.categoria}</span>
+                  <div className="font-serif text-xl text-[#2C2416] mb-1">{peixe.nome}</div>
+                  <span className="font-serif italic text-sm text-[#7A6A52] block mb-3">{peixe.nome_cientifico}</span>
+                  <div className="flex justify-between items-center pt-3 border-t border-[#E8E3CC]">
+                    <span className="font-serif text-2xl font-semibold text-[#6B5B3E]">{peixe.preco}</span>
+                    <span className="bg-[#5B8C7A] text-white text-sm px-4 py-2 rounded">Ver detalhes</span>
                   </div>
-                  <div className="p-5">
-                    <span className="text-xs font-medium tracking-widest uppercase text-[#9C8A6A] block mb-1">{peixe.categoria}</span>
-                    <div className="font-serif text-xl text-[#2C2416] mb-1">{peixe.nome}</div>
-                    <span className="font-serif italic text-sm text-[#7A6A52] block mb-3">{peixe.nome_cientifico}</span>
-                    <div className="flex justify-between items-center pt-3 border-t border-[#E8E3CC]">
-                      <span className="font-serif text-2xl font-semibold text-[#6B5B3E]">{peixe.preco}</span>
-                      <span className="bg-[#5B8C7A] text-white text-sm px-4 py-2 rounded">Ver detalhes</span>
-                    </div>
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
+                </div>
+              </Link>
+            )}
+          />
         )}
 
       </div>

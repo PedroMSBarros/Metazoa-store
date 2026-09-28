@@ -40,3 +40,38 @@
 .marquee-wrap:hover .marquee-track {
   animation-play-state: paused;
 }
+
+.carrossel-viewport {
+  overflow: hidden;
+}
+
+.carrossel-track {
+  display: flex;
+  will-change: transform;
+}
+
+.carrossel-item {
+  flex-shrink: 0;
+  width: 80%;
+  margin-right: 20px;
+}
+
+@media (min-width: 640px) {
+  .carrossel-item { width: 46%; }
+}
+
+@media (min-width: 768px) {
+  .carrossel-item { width: 31%; }
+}
+
+@media (min-width: 1024px) {
+  .carrossel-item { width: 23%; }
+}
+
+.carrossel-seta {
+  transition: opacity 0.2s, transform 0.15s, background-color 0.15s;
+}
+
+.carrossel-seta:active {
+  transform: translateY(-50%) scale(0.92);
+}

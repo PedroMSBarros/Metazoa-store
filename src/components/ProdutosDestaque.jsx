@@ -2,7 +2,20 @@ import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import ImagemProduto from './ImagemProduto'
+import CarrosselCards from './CarrosselCards'
 import { supabase } from '../lib/supabase'
+
+const TAMANHO_POOL = 60
+const QTD_NOVIDADE = 8
+
+function embaralhar(lista) {
+  const copia = [...lista]
+  for (let i = copia.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[copia[i], copia[j]] = [copia[j], copia[i]]
+  }
+  return copia
+}
 
 function ProdutosDestaque() {
   const [produtos, setProdutos] = useState([])
@@ -10,17 +23,21 @@ function ProdutosDestaque() {
 
   useEffect(() => {
     async function buscarProdutos() {
-      const { data, error } = await supabase.from('produtos').select('*').order('criado_em', { ascending: false }).limit(60)
-      if (!error) {
+      const { data, error } = await supabase
+        .from('produtos')
+        .select('*')
+        .order('criado_em', { ascending: false })
+        .limit(TAMANHO_POOL)
+
+      if (!error && data) {
         // So entra quem tem foto de verdade e nao e Pecas de Reposicao
         const elegiveis = data.filter(p =>
           p.imagem_url &&
-          p.categoria !== 'Peças de Reposição'
+          p.categoria !== 'Peças de Reposição' &&
+          p.disponivel !== false
         )
-        // Prioriza disponiveis; so mostra indisponivel se nao houver 6 disponiveis suficientes
-        const disponiveis = elegiveis.filter(p => p.disponivel !== false)
-        const indisponiveis = elegiveis.filter(p => p.disponivel === false)
-        setProdutos([...disponiveis, ...indisponiveis].slice(0, 6))
+        const comNovidade = elegiveis.map((p, i) => ({ ...p, _novidade: i < QTD_NOVIDADE }))
+        setProdutos(embaralhar(comNovidade))
       }
       setCarregando(false)
     }
@@ -59,34 +76,38 @@ function ProdutosDestaque() {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {produtos.map((produto, i) => (
-              <motion.div key={produto.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.1 }}>
-                <Link to={"/produto/" + produto.id} className="bg-[#F4F1E1] rounded-xl overflow-hidden hover:-translate-y-1 transition-transform duration-300 shadow-sm hover:shadow-md block">
-                  <div className="relative aspect-[4/3] overflow-hidden bg-[#E8E3CC]">
-                    <ImagemProduto
-                      src={produto.imagem_url}
-                      alt={produto.nome}
-                      prioritaria={i < 3}
-                      largura={450}
-                      className="w-full h-full object-contain hover:scale-105 transition-transform duration-500"
-                    />
+          <CarrosselCards
+            itens={produtos}
+            intervalo={2500}
+            corSeta="bg-[#F4F1E1]"
+            renderItem={(produto) => (
+              <Link to={"/produto/" + produto.id} className="bg-[#F4F1E1] rounded-xl overflow-hidden hover:-translate-y-1 transition-transform duration-300 shadow-sm hover:shadow-md block h-full">
+                <div className="relative aspect-[4/3] overflow-hidden bg-[#E8E3CC]">
+                  <ImagemProduto
+                    src={produto.imagem_url}
+                    alt={produto.nome}
+                    largura={450}
+                    className="w-full h-full object-contain hover:scale-105 transition-transform duration-500"
+                  />
+                  {produto._novidade && (
                     <span className="absolute top-3 left-3 bg-[#5B8C7A] text-white text-xs font-medium px-3 py-1 rounded-full z-10">Novidade</span>
+                  )}
+                </div>
+                <div className="p-5">
+                  <span className="text-xs font-medium tracking-widest uppercase text-[#9C8A6A] block mb-1">{produto.categoria}</span>
+                  <div className="font-serif text-xl text-[#2C2416] mb-1">{produto.nome}</div>
+                  {produto.marca && <span className="font-serif italic text-sm text-[#7A6A52] block mb-3">{produto.marca}</span>}
+                  <div className="flex justify-between items-center pt-3 border-t border-[#D9D2B0]">
+                    <span className="font-serif text-2xl font-semibold text-[#6B5B3E]">{produto.preco}</span>
+                    <span className="bg-[#5B8C7A] text-white text-sm px-4 py-2 rounded">Ver detalhes</span>
                   </div>
-                  <div className="p-5">
-                    <span className="text-xs font-medium tracking-widest uppercase text-[#9C8A6A] block mb-1">{produto.categoria}</span>
-                    <div className="font-serif text-xl text-[#2C2416] mb-1">{produto.nome}</div>
-                    {produto.marca && <span className="font-serif italic text-sm text-[#7A6A52] block mb-3">{produto.marca}</span>}
-                    <div className="flex justify-between items-center pt-3 border-t border-[#D9D2B0]">
-                      <span className="font-serif text-2xl font-semibold text-[#6B5B3E]">{produto.preco}</span>
-                      <span className="bg-[#5B8C7A] text-white text-sm px-4 py-2 rounded">Ver detalhes</span>
-                    </div>
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
+                </div>
+              </Link>
+            )}
+          />
         )}
+
+        <p className="text-xs text-[#9C8A6A] mt-6">* Itens da categoria "Peças de Reposição" nunca entram nesse carrossel.</p>
 
       </div>
     </section>
