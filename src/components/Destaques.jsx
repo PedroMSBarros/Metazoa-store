@@ -5,7 +5,7 @@ import ImagemProduto from './ImagemProduto'
 import CarrosselCards from './CarrosselCards'
 import { supabase } from '../lib/supabase'
 
-const TAMANHO_POOL = 40
+const TAMANHO_POOL = 150
 const QTD_NOVIDADE = 8
 
 function embaralhar(lista) {

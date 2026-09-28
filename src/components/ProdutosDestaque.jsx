@@ -5,7 +5,7 @@ import ImagemProduto from './ImagemProduto'
 import CarrosselCards from './CarrosselCards'
 import { supabase } from '../lib/supabase'
 
-const TAMANHO_POOL = 60
+const TAMANHO_POOL = 150
 const QTD_NOVIDADE = 8
 
 function embaralhar(lista) {
@@ -106,8 +106,6 @@ function ProdutosDestaque() {
             )}
           />
         )}
-
-        <p className="text-xs text-[#9C8A6A] mt-6">* Itens da categoria "Peças de Reposição" nunca entram nesse carrossel.</p>
 
       </div>
     </section>
