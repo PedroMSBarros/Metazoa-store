@@ -53,7 +53,7 @@ function Hero() {
         <motion.div className="hidden md:flex items-center justify-center" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7, delay: 0.2 }}>
           <div className="relative">
             <div className="w-80 h-80 rounded-full bg-[#C8D4A0] flex items-center justify-center relative overflow-hidden shadow-2xl">
-              <img src="https://i.postimg.cc/Kk3XcgDg/image.png" alt="Metazoa Store" className="w-full h-full object-cover" />
+              <img src="https://res.cloudinary.com/dcfvuaoxf/image/upload/v1790601730/LOGOTIPO_METAZOA_STORE_HD_p5hqlj.png" alt="Metazoa Store" className="w-full h-full object-cover" />
             </div>
             <div className="absolute -bottom-4 -right-4 w-24 h-24 rounded-full bg-[#4A8C1C]/20 border border-[#4A8C1C]/30"></div>
             <div className="absolute -top-4 -left-4 w-16 h-16 rounded-full bg-[#C8D4A0]/10 border border-[#C8D4A0]/20"></div>

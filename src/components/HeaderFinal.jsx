@@ -10,7 +10,7 @@ function Header() {
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
 
         <Link to="/" className="flex items-center gap-3">
-          <img src="https://i.postimg.cc/Kk3XcgDg/image.png" alt="Metazoa Store" className="h-10 w-10 rounded-full object-cover" />
+          <img src="https://res.cloudinary.com/dcfvuaoxf/image/upload/v1790601730/LOGOTIPO_METAZOA_STORE_HD_p5hqlj.png" alt="Metazoa Store" className="h-10 w-10 rounded-full object-cover" />
           <span className="font-serif text-xl font-semibold text-[#C8D4A0]">
             metazoa <span className="text-[#4A8C1C] font-bold not-italic">STORE</span>
           </span>

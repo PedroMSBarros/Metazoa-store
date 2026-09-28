@@ -29,7 +29,7 @@ function Footer() {
       <div className="max-w-6xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-8">
         <div>
           <Link to="/" className="flex items-center gap-3 mb-3">
-            <img src="https://i.postimg.cc/Kk3XcgDg/image.png" alt="Metazoa Store" className="h-10 w-10 rounded-full object-cover" />
+            <img src="https://res.cloudinary.com/dcfvuaoxf/image/upload/v1790601730/LOGOTIPO_METAZOA_STORE_HD_p5hqlj.png" alt="Metazoa Store" className="h-10 w-10 rounded-full object-cover" />
             <span className="font-serif text-lg text-[#C8D4A0]">metazoa <span className="text-[#4A8C1C] font-bold">STORE</span></span>
           </Link>
           <p className="text-sm leading-relaxed max-w-xs">Especialistas em aquarismo e vida animal. Peixes ornamentais, plantas aquáticas e acessórios.</p>

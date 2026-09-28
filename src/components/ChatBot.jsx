@@ -152,7 +152,7 @@ function ChatBot() {
 
           <div className="bg-[#2C1A0E] px-5 py-4 flex items-center justify-between flex-shrink-0">
             <div className="flex items-center gap-2">
-              <img src="https://i.postimg.cc/Kk3XcgDg/image.png" alt="Metazoa" className="w-8 h-8 rounded-full object-cover" />
+              <img src="https://res.cloudinary.com/dcfvuaoxf/image/upload/v1790601730/LOGOTIPO_METAZOA_STORE_HD_p5hqlj.png" alt="Metazoa" className="w-8 h-8 rounded-full object-cover" />
               <div>
                 <p className="text-[#C8D4A0] text-sm font-medium">Assistente Metazoa</p>
                 <p className="text-[#C8D4A0]/50 text-xs">Tire suas dúvidas sobre aquarismo</p>
