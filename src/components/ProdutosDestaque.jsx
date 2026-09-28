@@ -71,9 +71,7 @@ function ProdutosDestaque() {
                       largura={450}
                       className="w-full h-full object-contain hover:scale-105 transition-transform duration-500"
                     />
-                    {produto.badge && (
-                      <span className="absolute top-3 left-3 bg-[#5B8C7A] text-white text-xs font-medium px-3 py-1 rounded-full z-10">{produto.badge}</span>
-                    )}
+                    <span className="absolute top-3 left-3 bg-[#5B8C7A] text-white text-xs font-medium px-3 py-1 rounded-full z-10">Novidade</span>
                   </div>
                   <div className="p-5">
                     <span className="text-xs font-medium tracking-widest uppercase text-[#9C8A6A] block mb-1">{produto.categoria}</span>
