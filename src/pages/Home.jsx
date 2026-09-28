@@ -3,6 +3,7 @@ import Hero from '../components/Hero'
 import MarcasCarousel from '../components/MarcasCarousel'
 import Categorias from '../components/Categorias'
 import Destaques from '../components/Destaques'
+import ProdutosDestaque from '../components/ProdutosDestaque'
 import Sobre from '../components/Sobre'
 import Cuidados from '../components/Cuidados'
 import Footer from '../components/Footer'
@@ -15,6 +16,7 @@ function Home() {
       <MarcasCarousel />
       <Categorias />
       <Destaques />
+      <ProdutosDestaque />
       <Sobre />
       <Cuidados />
       <Footer />
