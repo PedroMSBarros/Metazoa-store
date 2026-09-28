@@ -10,11 +10,16 @@ function ProdutosDestaque() {
 
   useEffect(() => {
     async function buscarProdutos() {
-      const { data, error } = await supabase.from('produtos').select('*').order('criado_em', { ascending: false }).limit(12)
+      const { data, error } = await supabase.from('produtos').select('*').order('criado_em', { ascending: false }).limit(60)
       if (!error) {
+        // So entra quem tem foto de verdade e nao e Pecas de Reposicao
+        const elegiveis = data.filter(p =>
+          p.imagem_url &&
+          p.categoria !== 'Peças de Reposição'
+        )
         // Prioriza disponiveis; so mostra indisponivel se nao houver 6 disponiveis suficientes
-        const disponiveis = data.filter(p => p.disponivel !== false)
-        const indisponiveis = data.filter(p => p.disponivel === false)
+        const disponiveis = elegiveis.filter(p => p.disponivel !== false)
+        const indisponiveis = elegiveis.filter(p => p.disponivel === false)
         setProdutos([...disponiveis, ...indisponiveis].slice(0, 6))
       }
       setCarregando(false)
