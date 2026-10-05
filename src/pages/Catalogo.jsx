@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Loader, Search, X } from 'lucide-react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link, useLocation, useSearchParams } from 'react-router-dom'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import ImagemProduto from '../components/ImagemProduto'
@@ -121,24 +121,50 @@ function Catalogo() {
   const [peixes, setPeixes] = useState([])
   const [produtos, setProdutos] = useState([])
   const [carregando, setCarregando] = useState(true)
-  const [filtro, setFiltro] = useState('Todos')
-  const [mostrarAguaDoce, setMostrarAguaDoce] = useState(false)
-  const [mostrarProdutos, setMostrarProdutos] = useState(false)
-  const [busca, setBusca] = useState('')
-  const [ordenacao, setOrdenacao] = useState('padrao')
-  const [paginaAtual, setPaginaAtual] = useState(1)
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const location = useLocation()
+  const scrollRestauradoRef = useRef(false)
 
+  // Estado inicial vem da URL: isso permite que o botao "Voltar" das paginas
+  // de detalhe restaure a categoria, busca, ordenacao e pagina exatas em que
+  // o cliente estava (o historico do navegador ja guarda essa URL).
+  const [filtro, setFiltro] = useState(() => searchParams.get('categoria') || 'Todos')
+  const [busca, setBusca] = useState(() => searchParams.get('busca') || '')
+  const [ordenacao, setOrdenacao] = useState(() => searchParams.get('ordenacao') || 'padrao')
+  const [paginaAtual, setPaginaAtual] = useState(() => {
+    const p = parseInt(searchParams.get('pagina'), 10)
+    return p > 0 ? p : 1
+  })
+  const [mostrarAguaDoce, setMostrarAguaDoce] = useState(() => aguaDoceValues.includes(searchParams.get('categoria')))
+  const [mostrarProdutos, setMostrarProdutos] = useState(() => {
+    const c = searchParams.get('categoria')
+    return c === 'Produtos' || produtosValues.includes(c)
+  })
+
+  // Links externos (Header, Home) navegam para /catalogo?categoria=... ou
+  // ?busca=... mesmo quando o catalogo ja esta montado - sincroniza esses casos.
   useEffect(() => {
-    const buscaParam = searchParams.get('busca')
-    if (buscaParam) setBusca(buscaParam)
-    const categoriaParam = searchParams.get('categoria')
-    if (categoriaParam) {
-      setFiltro(categoriaParam)
+    const buscaParam = searchParams.get('busca') || ''
+    const categoriaParam = searchParams.get('categoria') || 'Todos'
+    setBusca(prev => (prev !== buscaParam ? buscaParam : prev))
+    setFiltro(prev => (prev !== categoriaParam ? categoriaParam : prev))
+    if (categoriaParam !== 'Todos') {
       if (aguaDoceValues.includes(categoriaParam)) setMostrarAguaDoce(true)
       if (categoriaParam === 'Produtos' || produtosValues.includes(categoriaParam)) setMostrarProdutos(true)
     }
   }, [searchParams])
+
+  // Mantem a URL sempre refletindo o estado atual (com replace, sem poluir o
+  // historico), para que a entrada do historico que fica para tras ao abrir
+  // um peixe/produto ja tenha a categoria, busca, ordenacao e pagina certas.
+  useEffect(() => {
+    const params = {}
+    if (filtro !== 'Todos') params.categoria = filtro
+    if (busca) params.busca = busca
+    if (ordenacao !== 'padrao') params.ordenacao = ordenacao
+    if (paginaAtual > 1) params.pagina = String(paginaAtual)
+    setSearchParams(params, { replace: true })
+  }, [filtro, busca, ordenacao, paginaAtual])
 
   useEffect(() => {
     async function buscarTudo() {
@@ -153,7 +179,14 @@ function Catalogo() {
     buscarTudo()
   }, [])
 
+  // Nao reseta a pagina no primeiro render: nesse momento paginaAtual ja
+  // veio da URL (restaurando onde o cliente estava ao clicar em "Voltar").
+  const primeiraRenderPaginaRef = useRef(true)
   useEffect(() => {
+    if (primeiraRenderPaginaRef.current) {
+      primeiraRenderPaginaRef.current = false
+      return
+    }
     setPaginaAtual(1)
   }, [filtro, busca, ordenacao])
 
@@ -194,6 +227,29 @@ function Catalogo() {
 
   const itensVisiveis = itensFiltrados.slice(0, paginaAtual * ITENS_POR_PAGINA)
   const temMais = itensVisiveis.length < itensFiltrados.length
+
+  // Guarda a posicao de rolagem associada a URL atual (categoria/busca/pagina),
+  // para restaurar quando o cliente voltar da pagina de um peixe/produto.
+  useEffect(() => {
+    const chave = 'catalogoScroll:' + location.search
+    function salvarScroll() {
+      sessionStorage.setItem(chave, String(window.scrollY))
+    }
+    window.addEventListener('scroll', salvarScroll, { passive: true })
+    return () => {
+      salvarScroll()
+      window.removeEventListener('scroll', salvarScroll)
+    }
+  }, [location.search])
+
+  useEffect(() => {
+    if (carregando || scrollRestauradoRef.current || itensVisiveis.length === 0) return
+    scrollRestauradoRef.current = true
+    const salvo = sessionStorage.getItem('catalogoScroll:' + location.search)
+    if (salvo) {
+      requestAnimationFrame(() => window.scrollTo(0, parseInt(salvo, 10) || 0))
+    }
+  }, [carregando, itensVisiveis.length, location.search])
 
   function handleFiltro(value) {
     setFiltro(value)
