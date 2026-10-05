@@ -13,6 +13,8 @@ function PeixeDetalhe() {
   const { id } = useParams()
   const navigate = useNavigate()
   const [peixe, setPeixe] = useState(null)
+  const [variantes, setVariantes] = useState([])
+  const [selecionadoId, setSelecionadoId] = useState(null)
   const [carregando, setCarregando] = useState(true)
   const [adicionado, setAdicionado] = useState(false)
   const [quantidade, setQuantidade] = useState(1)
@@ -23,7 +25,14 @@ function PeixeDetalhe() {
       const { data, error } = await supabase.from('peixes').select('*').eq('id', id).single()
       if (!error) {
         setPeixe(data)
+        setSelecionadoId(data.id)
         trackVisualizacaoPeixe(data)
+        if (data.grupo_variante) {
+          const { data: irmaos } = await supabase.from('peixes').select('*').eq('grupo_variante', data.grupo_variante).order('variante_ordem')
+          if (irmaos) setVariantes(irmaos)
+        } else {
+          setVariantes([])
+        }
       }
       setCarregando(false)
     }
@@ -31,8 +40,8 @@ function PeixeDetalhe() {
   }, [id])
 
   function handleAdicionarCarrinho() {
-    adicionarItem({ ...peixe, _tipo: 'peixe' }, quantidade)
-    trackAdicionarCarrinho(peixe)
+    adicionarItem({ ...selecionado, _tipo: 'peixe' }, quantidade)
+    trackAdicionarCarrinho(selecionado)
     setAdicionado(true)
     setQuantidade(1)
     setTimeout(() => setAdicionado(false), 2000)
@@ -62,17 +71,22 @@ function PeixeDetalhe() {
     )
   }
 
-  const indisponivel = peixe.disponivel === false
+  const temVariantes = variantes.length > 1
+  const selecionado = (temVariantes && variantes.find(v => v.id === selecionadoId)) || peixe
+  const nomeExibido = peixe.nome_base || peixe.nome
+  const indisponivel = selecionado.disponivel === false
+
+  const nomeParaWhatsApp = temVariantes ? nomeExibido + " (" + selecionado.variante_nome + ")" : selecionado.nome
 
   const msgWhatsApp = indisponivel
-    ? "Olá! Gostaria de saber sobre a disponibilidade futura do " + peixe.nome + "."
-    : "Olá! Vim pelo site e tenho interesse no " + peixe.nome + " (" + peixe.preco + "). Poderia me passar mais informações?"
+    ? "Olá! Gostaria de saber sobre a disponibilidade futura do " + nomeParaWhatsApp + "."
+    : "Olá! Vim pelo site e tenho interesse no " + nomeParaWhatsApp + " (" + selecionado.preco + "). Poderia me passar mais informações?"
 
   const infos = [
-    { icon: Thermometer, label: 'Temperatura', valor: peixe.temperatura },
-    { icon: Droplets, label: 'pH ideal', valor: peixe.ph },
-    { icon: Fish, label: 'Nível', valor: peixe.nivel },
-    { icon: Clock, label: 'Longevidade', valor: peixe.longevidade },
+    { icon: Thermometer, label: 'Temperatura', valor: selecionado.temperatura },
+    { icon: Droplets, label: 'pH ideal', valor: selecionado.ph },
+    { icon: Fish, label: 'Nível', valor: selecionado.nivel },
+    { icon: Clock, label: 'Longevidade', valor: selecionado.longevidade },
   ]
 
   const infosVisiveis = infos.filter(i => i.valor)
@@ -91,22 +105,51 @@ function PeixeDetalhe() {
 
           <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }}>
             <div className="relative rounded-2xl overflow-hidden aspect-square bg-[#E8E3CC]">
-              <img src={otimizarImagem(peixe.imagem_url, 700)} alt={peixe.nome} loading="eager" fetchpriority="high" className={`w-full h-full object-contain ${indisponivel ? 'grayscale' : ''}`} />
+              <img src={otimizarImagem(selecionado.imagem_url, 700)} alt={nomeExibido} loading="eager" fetchpriority="high" className={`w-full h-full object-contain ${indisponivel ? 'grayscale' : ''}`} />
               {indisponivel ? (
                 <span className="absolute top-4 left-4 bg-red-600 text-white text-xs font-medium px-3 py-1 rounded-full">Indisponível</span>
-              ) : peixe.badge ? (
-                <span className="absolute top-4 left-4 bg-[#5B8C7A] text-white text-xs font-medium px-3 py-1 rounded-full">{peixe.badge}</span>
+              ) : selecionado.badge ? (
+                <span className="absolute top-4 left-4 bg-[#5B8C7A] text-white text-xs font-medium px-3 py-1 rounded-full">{selecionado.badge}</span>
               ) : null}
             </div>
           </motion.div>
 
           <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }}>
-            <span className="text-xs font-medium tracking-widest uppercase text-[#9C8A6A] block mb-2">{peixe.categoria}</span>
-            <h1 className="font-serif text-4xl font-light text-[#2C2416] mb-1">{peixe.nome}</h1>
-            <p className="font-serif italic text-[#7A6A52] mb-6">{peixe.nome_cientifico}</p>
+            <span className="text-xs font-medium tracking-widest uppercase text-[#9C8A6A] block mb-2">{selecionado.categoria}</span>
+            <h1 className="font-serif text-4xl font-light text-[#2C2416] mb-1">{nomeExibido}</h1>
+            <p className="font-serif italic text-[#7A6A52] mb-6">{selecionado.nome_cientifico}</p>
+
+            {temVariantes && (
+              <div className="mb-6">
+                <span className="text-sm text-[#7A6A52] font-medium block mb-2">Escolha o tamanho</span>
+                <div className="flex flex-wrap gap-2">
+                  {variantes.map(v => {
+                    const vIndisponivel = v.disponivel === false
+                    const ativo = v.id === selecionado.id
+                    return (
+                      <button
+                        key={v.id}
+                        type="button"
+                        disabled={vIndisponivel}
+                        onClick={() => !vIndisponivel && setSelecionadoId(v.id)}
+                        className={
+                          vIndisponivel
+                            ? 'px-4 py-2 rounded-full text-sm border border-[#E8E3CC] text-[#B3A98A] bg-[#F4F1E1] line-through cursor-not-allowed'
+                            : ativo
+                              ? 'px-4 py-2 rounded-full text-sm bg-[#5B8C7A] text-white border border-[#5B8C7A] transition-colors'
+                              : 'px-4 py-2 rounded-full text-sm bg-white text-[#6B5B3E] border border-[#D9D2B0] hover:border-[#5B8C7A] transition-colors'
+                        }
+                      >
+                        {v.variante_nome}{vIndisponivel ? ' (indisponível)' : ''}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
 
             <div className="border-t border-b border-[#D9D2B0] py-6 mb-6">
-              <span className={`font-serif text-5xl font-semibold ${indisponivel ? 'text-[#9C8A6A] line-through' : 'text-[#6B5B3E]'}`}>{peixe.preco}</span>
+              <span className={`font-serif text-5xl font-semibold ${indisponivel ? 'text-[#9C8A6A] line-through' : 'text-[#6B5B3E]'}`}>{selecionado.preco}</span>
               {!indisponivel && <span className="text-[#7A6A52] text-sm ml-2">por unidade</span>}
             </div>
 
@@ -114,8 +157,14 @@ function PeixeDetalhe() {
               <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 flex items-start gap-3">
                 <XCircle className="text-red-600 flex-shrink-0 mt-0.5" size={20} />
                 <div>
-                  <p className="text-red-800 font-medium text-sm">Produto indisponível no momento</p>
-                  <p className="text-red-600 text-xs mt-1">Consulte pelo WhatsApp para saber sobre disponibilidade futura.</p>
+                  <p className="text-red-800 font-medium text-sm">
+                    {temVariantes ? `Tamanho ${selecionado.variante_nome} indisponível no momento` : 'Produto indisponível no momento'}
+                  </p>
+                  <p className="text-red-600 text-xs mt-1">
+                    {temVariantes && variantes.some(v => v.disponivel !== false)
+                      ? 'Escolha outro tamanho disponível acima ou consulte pelo WhatsApp.'
+                      : 'Consulte pelo WhatsApp para saber sobre disponibilidade futura.'}
+                  </p>
                 </div>
               </div>
             )}

@@ -24,6 +24,7 @@ const subcategorias = [
   { label: 'Ciclídeos Africanos', value: 'Ciclídeos Africanos' },
   { label: 'Betta', value: 'Betta' },
   { label: 'Ovovíparos', value: 'Ovovíparos' },
+  { label: 'Killifish e Rainbow Fishs', value: 'Killifish e Rainbow Fishs' },
   { label: 'Kinguios & Carpas', value: 'Kinguios & Carpas' },
 ]
 
@@ -56,7 +57,7 @@ const categoriasProdutos = [
   { label: 'Aquários', value: 'Aquários' },
 ]
 
-const aguaDoceValues = ['Agua Doce', 'Primitivos', 'Amazônicos', 'Variados', 'Jumbos', 'Cascudos', 'Ciclídeos Africanos', 'Betta', 'Ovovíparos', 'Kinguios & Carpas']
+const aguaDoceValues = ['Agua Doce', 'Primitivos', 'Amazônicos', 'Variados', 'Jumbos', 'Cascudos', 'Ciclídeos Africanos', 'Betta', 'Ovovíparos', 'Kinguios & Carpas', 'Killifish e Rainbow Fishs']
 
 const ITENS_POR_PAGINA = 24
 
@@ -83,6 +84,37 @@ function ordenarItens(itens, criterio) {
     default:
       return copia
   }
+}
+
+function formatPreco(valor) {
+  return 'R$ ' + valor.toFixed(2).replace('.', ',')
+}
+
+function agruparVariantes(peixesLista) {
+  const semGrupo = peixesLista.filter(p => !p.grupo_variante)
+  const grupos = {}
+  peixesLista.forEach(p => {
+    if (!p.grupo_variante) return
+    if (!grupos[p.grupo_variante]) grupos[p.grupo_variante] = []
+    grupos[p.grupo_variante].push(p)
+  })
+  const itensAgrupados = Object.values(grupos).map(variantes => {
+    const ordenadas = [...variantes].sort((a, b) => (a.variante_ordem || 0) - (b.variante_ordem || 0))
+    const disponiveis = ordenadas.filter(v => v.disponivel !== false)
+    const representante = disponiveis[0] || ordenadas[0]
+    const precos = ordenadas.map(v => parsePreco(v.preco)).filter(v => v > 0)
+    const precoMin = precos.length ? Math.min(...precos) : 0
+    const precoMax = precos.length ? Math.max(...precos) : 0
+    return {
+      ...representante,
+      nome: representante.nome_base || representante.nome,
+      _variantes: ordenadas,
+      _precoMin: precoMin,
+      _precoMax: precoMax,
+      disponivel: disponiveis.length > 0,
+    }
+  })
+  return [...semGrupo, ...itensAgrupados]
 }
 
 function Catalogo() {
@@ -134,7 +166,7 @@ function Catalogo() {
   }, [busca])
 
   const todosItens = [
-    ...peixes.map(p => ({ ...p, _tipo: 'peixe' })),
+    ...agruparVariantes(peixes).map(p => ({ ...p, _tipo: 'peixe' })),
     ...produtos.map(p => ({ ...p, _tipo: 'produto' }))
   ]
 
@@ -307,8 +339,15 @@ function Catalogo() {
                         <div className="font-serif text-xl text-[#2C2416] mb-1">{item.nome}</div>
                         {item.nome_cientifico && <span className="font-serif italic text-sm text-[#7A6A52] block mb-3">{item.nome_cientifico}</span>}
                         {item.descricao && <span className="text-sm text-[#7A6A52] block mb-3 line-clamp-2">{item.descricao}</span>}
+                        {item._variantes && item._variantes.length > 1 && (
+                          <span className="text-xs text-[#5B8C7A] block mb-3">
+                            {item._variantes.length} tamanhos disponíveis
+                          </span>
+                        )}
                         <div className="flex justify-between items-center pt-3 border-t border-[#E8E3CC]">
-                          <span className={`font-serif text-2xl font-semibold ${indisponivel ? 'text-[#9C8A6A] line-through' : 'text-[#6B5B3E]'}`}>{item.preco}</span>
+                          <span className={`font-serif text-2xl font-semibold ${indisponivel ? 'text-[#9C8A6A] line-through' : 'text-[#6B5B3E]'}`}>
+                            {!indisponivel && item._variantes && item._precoMin !== item._precoMax ? `A partir de ${formatPreco(item._precoMin)}` : item.preco}
+                          </span>
                           <span className={`text-sm px-4 py-2 rounded text-white ${indisponivel ? 'bg-[#9C8A6A]' : 'bg-[#5B8C7A]'}`}>
                             {indisponivel ? 'Consultar' : 'Ver detalhes'}
                           </span>

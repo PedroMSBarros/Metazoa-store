@@ -31,7 +31,14 @@ function Destaques() {
 
       if (!error && data) {
         const disponiveis = data.filter(p => p.disponivel !== false)
-        const comNovidade = disponiveis.map((p, i) => ({ ...p, _novidade: i < QTD_NOVIDADE }))
+        const vistos = new Set()
+        const semDuplicarVariantes = disponiveis.filter(p => {
+          if (!p.grupo_variante) return true
+          if (vistos.has(p.grupo_variante)) return false
+          vistos.add(p.grupo_variante)
+          return true
+        })
+        const comNovidade = semDuplicarVariantes.map((p, i) => ({ ...p, _novidade: i < QTD_NOVIDADE }))
         setPeixes(embaralhar(comNovidade))
       }
       setCarregando(false)
@@ -90,7 +97,7 @@ function Destaques() {
                 </div>
                 <div className="p-5">
                   <span className="text-xs font-medium tracking-widest uppercase text-[#9C8A6A] block mb-1">{peixe.categoria}</span>
-                  <div className="font-serif text-xl text-[#2C2416] mb-1">{peixe.nome}</div>
+                  <div className="font-serif text-xl text-[#2C2416] mb-1">{peixe.nome_base || peixe.nome}</div>
                   <span className="font-serif italic text-sm text-[#7A6A52] block mb-3">{peixe.nome_cientifico}</span>
                   <div className="flex justify-between items-center pt-3 border-t border-[#E8E3CC]">
                     <span className="font-serif text-2xl font-semibold text-[#6B5B3E]">{peixe.preco}</span>
