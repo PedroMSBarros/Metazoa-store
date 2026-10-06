@@ -1,84 +1,101 @@
 import { useEffect, useRef } from 'react'
 
-const CLONES = 4
+const PAUSA_APOS_INTERACAO = 5000
 
-// Carrossel generico com auto-avanco, loop infinito sem "pulo" e setas manuais.
-// Recebe uma lista de itens ja pronta (embaralhada/filtrada pelo componente pai)
-// e uma funcao renderItem(item) que devolve o card.
-function CarrosselCards({ itens, renderItem, intervalo = 2500, corSeta = 'bg-white' }) {
-  const trackRef = useRef(null)
-  const indexRef = useRef(CLONES)
-  const travadoRef = useRef(false)
-  const timerRef = useRef(null)
+// Carrossel generico com rolagem nativa (o cliente desliza com o dedo no celular),
+// auto-avanco e setas no desktop. O auto-avanco pausa enquanto o cliente interage
+// e volta sozinho alguns segundos depois - nunca fica travado apos um toque.
+function CarrosselCards({ itens, renderItem, intervalo = 3500, corSeta = 'bg-white' }) {
+  const viewportRef = useRef(null)
+  const pausadoRef = useRef(false)
+  const visivelRef = useRef(true)
+  const retomarRef = useRef(null)
 
   const N = itens.length
-  const estendidos = N > 0
-    ? [...itens.slice(-CLONES), ...itens, ...itens.slice(0, CLONES)]
-    : []
 
-  function medirPasso() {
-    const track = trackRef.current
-    if (!track) return 0
-    const item = track.children[indexRef.current]
-    if (!item) return 0
-    const estilo = getComputedStyle(item)
-    return item.offsetWidth + parseFloat(estilo.marginRight || 0)
-  }
-
-  function ir(pos, comTransicao) {
-    const track = trackRef.current
-    if (!track) return
-    track.style.transition = comTransicao ? 'transform 0.5s ease' : 'none'
-    const passo = medirPasso()
-    track.style.transform = `translateX(${-pos * passo}px)`
+  function passo() {
+    const vp = viewportRef.current
+    if (!vp || vp.children.length === 0) return 0
+    if (vp.children.length === 1) return vp.children[0].offsetWidth
+    return vp.children[1].offsetLeft - vp.children[0].offsetLeft
   }
 
   function mover(direcao) {
-    if (travadoRef.current || N === 0) return
-    travadoRef.current = true
-    indexRef.current += direcao
-    ir(indexRef.current, true)
+    const vp = viewportRef.current
+    if (!vp) return
+    const max = vp.scrollWidth - vp.clientWidth
+    if (max <= 0) return
+
+    // Chegou no fim: volta para o inicio (e vice-versa) sem animar a lista inteira
+    if (direcao > 0 && vp.scrollLeft >= max - 4) {
+      vp.scrollTo({ left: 0, behavior: 'auto' })
+      return
+    }
+    if (direcao < 0 && vp.scrollLeft <= 4) {
+      vp.scrollTo({ left: max, behavior: 'auto' })
+      return
+    }
+    vp.scrollBy({ left: direcao * passo(), behavior: 'smooth' })
   }
 
-  function pausar() {
-    clearInterval(timerRef.current)
+  function pausarTemporariamente() {
+    pausadoRef.current = true
+    clearTimeout(retomarRef.current)
+    retomarRef.current = setTimeout(() => { pausadoRef.current = false }, PAUSA_APOS_INTERACAO)
   }
 
-  function retomar() {
-    clearInterval(timerRef.current)
-    timerRef.current = setInterval(() => mover(1), intervalo)
+  function clicarSeta(direcao) {
+    mover(direcao)
+    pausarTemporariamente()
   }
 
   useEffect(() => {
-    if (N === 0) return
+    const vp = viewportRef.current
+    if (!vp || N === 0) return
 
-    indexRef.current = CLONES
-    ir(indexRef.current, false)
+    const semAnimacao = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const temMouse = window.matchMedia('(hover: hover) and (pointer: fine)').matches
 
-    function aoTransicionar() {
-      travadoRef.current = false
-      if (indexRef.current >= N + CLONES) {
-        indexRef.current = CLONES
-        ir(indexRef.current, false)
-      } else if (indexRef.current < CLONES) {
-        indexRef.current = N + CLONES - 1
-        ir(indexRef.current, false)
-      }
+    function aoEntrarMouse() {
+      pausadoRef.current = true
+      clearTimeout(retomarRef.current)
+    }
+    function aoSairMouse() {
+      clearTimeout(retomarRef.current)
+      retomarRef.current = setTimeout(() => { pausadoRef.current = false }, 1000)
     }
 
-    function aoRedimensionar() {
-      ir(indexRef.current, false)
+    // Dedo (touchstart), clique (pointerdown) e trackpad/roda do mouse (wheel) contam como interacao.
+    // Nao usamos o evento 'scroll' porque o encaixe automatico dos cards tambem dispara rolagem.
+    vp.addEventListener('wheel', pausarTemporariamente, { passive: true })
+    vp.addEventListener('touchstart', pausarTemporariamente, { passive: true })
+    vp.addEventListener('pointerdown', pausarTemporariamente)
+    if (temMouse) {
+      vp.addEventListener('mouseenter', aoEntrarMouse)
+      vp.addEventListener('mouseleave', aoSairMouse)
     }
 
-    const track = trackRef.current
-    track?.addEventListener('transitionend', aoTransicionar)
-    window.addEventListener('resize', aoRedimensionar)
-    timerRef.current = setInterval(() => mover(1), intervalo)
+    // So anda quando o carrossel esta na tela
+    const observer = new IntersectionObserver(
+      ([entrada]) => { visivelRef.current = entrada.isIntersecting },
+      { threshold: 0.3 }
+    )
+    observer.observe(vp)
+
+    const timer = semAnimacao ? null : setInterval(() => {
+      if (pausadoRef.current || !visivelRef.current || document.hidden) return
+      mover(1)
+    }, intervalo)
 
     return () => {
-      track?.removeEventListener('transitionend', aoTransicionar)
-      window.removeEventListener('resize', aoRedimensionar)
-      clearInterval(timerRef.current)
+      vp.removeEventListener('wheel', pausarTemporariamente)
+      vp.removeEventListener('touchstart', pausarTemporariamente)
+      vp.removeEventListener('pointerdown', pausarTemporariamente)
+      vp.removeEventListener('mouseenter', aoEntrarMouse)
+      vp.removeEventListener('mouseleave', aoSairMouse)
+      observer.disconnect()
+      clearInterval(timer)
+      clearTimeout(retomarRef.current)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [N, intervalo])
@@ -86,32 +103,32 @@ function CarrosselCards({ itens, renderItem, intervalo = 2500, corSeta = 'bg-whi
   if (N === 0) return null
 
   return (
-    <div className="relative" onMouseEnter={pausar} onMouseLeave={retomar}>
+    <div className="relative">
       <button
-        onClick={() => mover(-1)}
+        onClick={() => clicarSeta(-1)}
         aria-label="Anterior"
         className={`carrossel-seta hidden md:flex absolute -left-5 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full ${corSeta} shadow-lg items-center justify-center text-[#5B8C7A] hover:bg-[#5B8C7A] hover:text-white text-xl`}
       >
         ‹
       </button>
 
-      <div className="carrossel-viewport">
-        <div ref={trackRef} className="carrossel-track">
-          {estendidos.map((item, i) => (
-            <div key={i} className="carrossel-item">
-              {renderItem(item)}
-            </div>
-          ))}
-        </div>
+      <div ref={viewportRef} className="carrossel-viewport" role="region" aria-roledescription="carrossel">
+        {itens.map((item, i) => (
+          <div key={item.id ?? i} className="carrossel-item">
+            {renderItem(item)}
+          </div>
+        ))}
       </div>
 
       <button
-        onClick={() => mover(1)}
+        onClick={() => clicarSeta(1)}
         aria-label="Próximo"
         className={`carrossel-seta hidden md:flex absolute -right-5 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full ${corSeta} shadow-lg items-center justify-center text-[#5B8C7A] hover:bg-[#5B8C7A] hover:text-white text-xl`}
       >
         ›
       </button>
+
+      <p className="md:hidden text-center text-xs text-[#9C8A6A] mt-3">Deslize para ver mais →</p>
     </div>
   )
 }

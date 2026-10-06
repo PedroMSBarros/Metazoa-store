@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Trash2, Plus, Minus, ShoppingCart } from 'lucide-react'
 import { useCart } from './CartContext'
+import { otimizarImagem } from '../lib/imagem'
 
 function Carrinho({ aberto, fechar }) {
   const { itens, removerItem, alterarQuantidade, limparCarrinho, total, totalItens } = useCart()
@@ -25,20 +26,20 @@ function Carrinho({ aberto, fechar }) {
       {aberto && (
         <>
           <motion.div
-            className="fixed inset-0 bg-black/50 z-50"
+            className="fixed inset-0 bg-black/50 z-[60]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={fechar}
           />
           <motion.div
-            className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-white z-50 flex flex-col shadow-2xl"
+            className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-white z-[60] flex flex-col shadow-2xl"
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
           >
-            <div className="flex items-center justify-between p-6 border-b border-[#E8E3CC]">
+            <div className="flex items-center justify-between px-4 py-4 md:p-6 border-b border-[#E8E3CC]">
               <div className="flex items-center gap-3">
                 <ShoppingCart className="text-[#5B8C7A]" size={22} />
                 <h2 className="font-serif text-xl text-[#2C2416]">Meu Pedido</h2>
@@ -46,7 +47,7 @@ function Carrinho({ aberto, fechar }) {
                   <span className="bg-[#5B8C7A] text-white text-xs font-medium px-2 py-0.5 rounded-full">{totalItens}</span>
                 )}
               </div>
-              <button onClick={fechar} className="text-[#7A6A52] hover:text-[#2C2416] transition-colors">
+              <button onClick={fechar} aria-label="Fechar carrinho" className="text-[#7A6A52] hover:text-[#2C2416] transition-colors p-2 -m-2">
                 <X size={22} />
               </button>
             </div>
@@ -65,22 +66,22 @@ function Carrinho({ aberto, fechar }) {
                 <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
                   {itens.map(item => (
                     <div key={item.id + item._tipo} className="bg-[#F4F1E1] rounded-xl p-3 flex gap-3">
-                      <img src={item.imagem_url} alt={item.nome} className="w-16 h-16 object-cover rounded-lg flex-shrink-0" />
+                      <img src={otimizarImagem(item.imagem_url, 128)} alt={item.nome} className="w-16 h-16 object-cover rounded-lg flex-shrink-0" />
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-[#2C2416] truncate">{item.nome}</p>
+                        <p className="text-sm font-medium text-[#2C2416] line-clamp-2">{item.nome}</p>
                         <p className="text-xs text-[#7A6A52] mb-2">{item.preco}</p>
                         <div className="flex items-center gap-2">
-                          <button onClick={() => alterarQuantidade(item.id, item._tipo, item.quantidade - 1)} className="w-7 h-7 rounded-full bg-white border border-[#D9D2B0] flex items-center justify-center hover:border-[#5B8C7A] transition-colors">
-                            <Minus size={12} />
+                          <button onClick={() => alterarQuantidade(item.id, item._tipo, item.quantidade - 1)} aria-label="Diminuir quantidade" className="w-9 h-9 rounded-full bg-white border border-[#D9D2B0] flex items-center justify-center hover:border-[#5B8C7A] transition-colors">
+                            <Minus size={14} />
                           </button>
                           <span className="text-sm font-medium w-6 text-center">{item.quantidade}</span>
-                          <button onClick={() => alterarQuantidade(item.id, item._tipo, item.quantidade + 1)} className="w-7 h-7 rounded-full bg-white border border-[#D9D2B0] flex items-center justify-center hover:border-[#5B8C7A] transition-colors">
-                            <Plus size={12} />
+                          <button onClick={() => alterarQuantidade(item.id, item._tipo, item.quantidade + 1)} aria-label="Aumentar quantidade" className="w-9 h-9 rounded-full bg-white border border-[#D9D2B0] flex items-center justify-center hover:border-[#5B8C7A] transition-colors">
+                            <Plus size={14} />
                           </button>
                         </div>
                       </div>
                       <div className="flex flex-col items-end justify-between">
-                        <button onClick={() => removerItem(item.id, item._tipo)} className="text-[#9C8A6A] hover:text-red-500 transition-colors">
+                        <button onClick={() => removerItem(item.id, item._tipo)} aria-label="Remover item" className="text-[#9C8A6A] hover:text-red-500 transition-colors p-2 -m-2">
                           <Trash2 size={16} />
                         </button>
                         <span className="text-sm font-serif font-semibold text-[#6B5B3E]">
@@ -94,7 +95,7 @@ function Carrinho({ aberto, fechar }) {
                   ))}
                 </div>
 
-                <div className="p-6 border-t border-[#E8E3CC] bg-white">
+                <div className="px-4 pt-4 md:p-6 border-t border-[#E8E3CC] bg-white" style={{ paddingBottom: 'calc(1rem + env(safe-area-inset-bottom, 0px))' }}>
                   <div className="flex justify-between items-center mb-4">
                     <span className="text-[#7A6A52]">Total do pedido</span>
                     <span className="font-serif text-2xl font-semibold text-[#6B5B3E]">

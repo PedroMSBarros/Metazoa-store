@@ -119,7 +119,7 @@ function ChatBot() {
   return (
     <>
       {!aberto && (
-        <div className="fixed right-6 z-50 flex items-end gap-2" style={{ bottom: 'calc(6rem + env(safe-area-inset-bottom, 0px))' }}>
+        <div className="flutuante flutuante-chat fixed right-4 md:right-6 z-50 flex items-end gap-2">
 
           {dicaVisivel && (
             <div className="relative bg-white rounded-2xl rounded-br-sm shadow-lg px-4 py-3 max-w-[220px] mb-1 animate-fadein">
@@ -139,7 +139,7 @@ function ChatBot() {
 
           <button
             onClick={abrirChat}
-            className="bg-[#5B8C7A] text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform duration-200 flex-shrink-0"
+            className="bg-[#5B8C7A] text-white w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center shadow-lg md:hover:scale-110 transition-transform duration-200 flex-shrink-0"
             title="Fale com nosso assistente"
           >
             <MessageSquare size={24} />
@@ -148,7 +148,7 @@ function ChatBot() {
       )}
 
       {aberto && (
-        <div className="fixed right-6 z-50 w-[calc(100vw-3rem)] max-w-sm h-[min(500px,75vh)] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-[#D9D2B0]" style={{ bottom: 'calc(1.5rem + env(safe-area-inset-bottom, 0px))' }}>
+        <div className="fixed right-2 md:right-6 z-50 w-[calc(100vw-1rem)] md:w-[calc(100vw-3rem)] max-w-sm h-[min(520px,80dvh)] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-[#D9D2B0]" style={{ bottom: 'calc(0.5rem + env(safe-area-inset-bottom, 0px))' }}>
 
           <div className="bg-[#2C1A0E] px-5 py-4 flex items-center justify-between flex-shrink-0">
             <div className="flex items-center gap-2">

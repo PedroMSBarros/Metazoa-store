@@ -61,6 +61,9 @@ const aguaDoceValues = ['Agua Doce', 'Primitivos', 'Amazônicos', 'Variados', 'J
 
 const ITENS_POR_PAGINA = 24
 
+// So o que o card precisa: a descricao completa dos peixes e carregada apenas na pagina do peixe
+const COLUNAS_PEIXES_CARD = 'id, nome, nome_base, nome_cientifico, categoria, preco, badge, imagem_url, disponivel, grupo_variante, variante_nome, variante_ordem'
+
 function parsePreco(preco) {
   if (!preco) return 0
   const limpo = String(preco).replace(/[^\d,]/g, '').replace(',', '.')
@@ -169,7 +172,7 @@ function Catalogo() {
   useEffect(() => {
     async function buscarTudo() {
       const [{ data: dataPeixes }, { data: dataProdutos }] = await Promise.all([
-        supabase.from('peixes').select('*').order('nome'),
+        supabase.from('peixes').select(COLUNAS_PEIXES_CARD).order('nome'),
         supabase.from('produtos').select('*').order('nome')
       ])
       if (dataPeixes) setPeixes(dataPeixes)
@@ -259,7 +262,7 @@ function Catalogo() {
   return (
     <div className="bg-[#F4F1E1] min-h-screen">
       <Header />
-      <div className="pt-24 pb-20 px-6 max-w-6xl mx-auto">
+      <div className="pt-20 md:pt-24 pb-16 md:pb-20 px-4 md:px-6 max-w-6xl mx-auto">
 
         <motion.div className="mb-10" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
           <span className="text-[#5B8C7A] text-sm font-medium tracking-widest uppercase flex items-center gap-2">
@@ -369,42 +372,46 @@ function Catalogo() {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
               {itensVisiveis.map((item, i) => {
                 const indisponivel = item.disponivel === false
+                const aPartirDe = !indisponivel && item._variantes && item._precoMin !== item._precoMax
                 return (
                   <div key={item.id + item._tipo} className="animate-fadein" style={{ animationDelay: (i % ITENS_POR_PAGINA) * 0.02 + 's' }}>
-                    <Link to={"/" + item._tipo + "/" + item.id} className="bg-white rounded-xl overflow-hidden hover:-translate-y-1 transition-transform duration-300 shadow-sm hover:shadow-md block">
+                    <Link to={"/" + item._tipo + "/" + item.id} className="bg-white rounded-xl overflow-hidden md:hover:-translate-y-1 transition-transform duration-300 shadow-sm hover:shadow-md h-full flex flex-col">
                       <div className="relative aspect-[4/3] overflow-hidden bg-[#E8E3CC]">
                         <ImagemProduto
                           src={item.imagem_url}
                           alt={item.nome}
-                          prioritaria={i < 6}
+                          prioritaria={i < 4}
                           indisponivel={indisponivel}
                           largura={450}
-                          className="w-full h-full object-contain hover:scale-105 transition-transform duration-500"
+                          className="w-full h-full object-contain md:hover:scale-105 transition-transform duration-500"
                         />
                         {indisponivel ? (
-                          <span className="absolute top-3 left-3 bg-red-600 text-white text-xs font-medium px-3 py-1 rounded-full z-10">Indisponível</span>
+                          <span className="absolute top-2 left-2 md:top-3 md:left-3 bg-red-600 text-white text-[10px] md:text-xs font-medium px-2 md:px-3 py-0.5 md:py-1 rounded-full z-10">Indisponível</span>
                         ) : item.badge ? (
-                          <span className="absolute top-3 left-3 bg-[#5B8C7A] text-white text-xs font-medium px-3 py-1 rounded-full z-10">{item.badge}</span>
+                          <span className="absolute top-2 left-2 md:top-3 md:left-3 bg-[#5B8C7A] text-white text-[10px] md:text-xs font-medium px-2 md:px-3 py-0.5 md:py-1 rounded-full z-10">{item.badge}</span>
                         ) : null}
                       </div>
-                      <div className="p-5">
-                        <span className="text-xs font-medium tracking-widest uppercase text-[#9C8A6A] block mb-1">{item.categoria}</span>
-                        <div className="font-serif text-xl text-[#2C2416] mb-1">{item.nome}</div>
-                        {item.nome_cientifico && <span className="font-serif italic text-sm text-[#7A6A52] block mb-3">{item.nome_cientifico}</span>}
-                        {item.descricao && <span className="text-sm text-[#7A6A52] block mb-3 line-clamp-2">{item.descricao}</span>}
+                      <div className="p-3 md:p-5 flex flex-col flex-1">
+                        <span className="text-[10px] md:text-xs font-medium tracking-widest uppercase text-[#9C8A6A] block mb-1 truncate">{item.categoria}</span>
+                        <div className="font-serif text-[15px] md:text-xl leading-snug text-[#2C2416] mb-1 line-clamp-2">{item.nome}</div>
+                        {item.nome_cientifico && <span className="font-serif italic text-xs md:text-sm text-[#7A6A52] block mb-2 md:mb-3 truncate">{item.nome_cientifico}</span>}
+                        {item.descricao && <span className="hidden md:block text-sm text-[#7A6A52] mb-3 line-clamp-2">{item.descricao}</span>}
                         {item._variantes && item._variantes.length > 1 && (
-                          <span className="text-xs text-[#5B8C7A] block mb-3">
-                            {item._variantes.length} tamanhos disponíveis
+                          <span className="text-[11px] md:text-xs text-[#5B8C7A] block mb-2 md:mb-3">
+                            {item._variantes.length} tamanhos
                           </span>
                         )}
-                        <div className="flex justify-between items-center pt-3 border-t border-[#E8E3CC]">
-                          <span className={`font-serif text-2xl font-semibold ${indisponivel ? 'text-[#9C8A6A] line-through' : 'text-[#6B5B3E]'}`}>
-                            {!indisponivel && item._variantes && item._precoMin !== item._precoMax ? `A partir de ${formatPreco(item._precoMin)}` : item.preco}
-                          </span>
-                          <span className={`text-sm px-4 py-2 rounded text-white ${indisponivel ? 'bg-[#9C8A6A]' : 'bg-[#5B8C7A]'}`}>
+                        <div className="flex justify-between items-end gap-2 pt-2 md:pt-3 mt-auto border-t border-[#E8E3CC]">
+                          <div className="min-w-0">
+                            {aPartirDe && <span className="block text-[11px] md:text-xs text-[#7A6A52] leading-tight">A partir de</span>}
+                            <span className={`font-serif text-lg md:text-2xl font-semibold whitespace-nowrap ${indisponivel ? 'text-[#9C8A6A] line-through' : 'text-[#6B5B3E]'}`}>
+                              {aPartirDe ? formatPreco(item._precoMin) : item.preco}
+                            </span>
+                          </div>
+                          <span className={`hidden md:inline-block text-sm px-4 py-2 rounded text-white flex-shrink-0 ${indisponivel ? 'bg-[#9C8A6A]' : 'bg-[#5B8C7A]'}`}>
                             {indisponivel ? 'Consultar' : 'Ver detalhes'}
                           </span>
                         </div>
@@ -416,8 +423,8 @@ function Catalogo() {
             </div>
 
             {temMais && (
-              <div className="flex justify-center mt-10">
-                <button onClick={() => setPaginaAtual(p => p + 1)} className="bg-white border border-[#D9D2B0] text-[#6B5B3E] px-8 py-3 rounded-full text-sm font-medium hover:bg-[#5B8C7A] hover:text-white hover:border-[#5B8C7A] transition-colors">
+              <div className="flex justify-center mt-8 md:mt-10">
+                <button onClick={() => setPaginaAtual(p => p + 1)} className="w-full md:w-auto bg-white border border-[#D9D2B0] text-[#6B5B3E] px-8 py-3.5 md:py-3 rounded-full text-sm font-medium hover:bg-[#5B8C7A] hover:text-white hover:border-[#5B8C7A] transition-colors">
                   Carregar mais ({itensFiltrados.length - itensVisiveis.length} restantes)
                 </button>
               </div>

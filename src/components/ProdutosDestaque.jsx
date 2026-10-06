@@ -78,7 +78,7 @@ function ProdutosDestaque() {
         ) : (
           <CarrosselCards
             itens={produtos}
-            intervalo={2500}
+            intervalo={3500}
             corSeta="bg-[#F4F1E1]"
             renderItem={(produto) => (
               <Link to={"/produto/" + produto.id} className="bg-[#F4F1E1] rounded-xl overflow-hidden hover:-translate-y-1 transition-transform duration-300 shadow-sm hover:shadow-md block h-full">
@@ -87,7 +87,7 @@ function ProdutosDestaque() {
                     src={produto.imagem_url}
                     alt={produto.nome}
                     largura={450}
-                    className="w-full h-full object-contain hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-contain md:hover:scale-105 transition-transform duration-500"
                   />
                   {produto._novidade && (
                     <span className="absolute top-3 left-3 bg-[#5B8C7A] text-white text-xs font-medium px-3 py-1 rounded-full z-10">Novidade</span>

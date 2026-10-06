@@ -25,7 +25,7 @@ function Destaques() {
     async function buscarPeixes() {
       const { data, error } = await supabase
         .from('peixes')
-        .select('*')
+        .select('id, nome, nome_base, nome_cientifico, categoria, preco, imagem_url, disponivel, grupo_variante, criado_em')
         .order('criado_em', { ascending: false })
         .limit(TAMANHO_POOL)
 
@@ -80,16 +80,16 @@ function Destaques() {
         ) : (
           <CarrosselCards
             itens={peixes}
-            intervalo={2500}
+            intervalo={3500}
             corSeta="bg-white"
             renderItem={(peixe) => (
-              <Link to={"/peixe/" + peixe.id} className="bg-white rounded-xl overflow-hidden hover:-translate-y-1 transition-transform duration-300 shadow-sm hover:shadow-md block h-full">
+              <Link to={"/peixe/" + peixe.id} className="bg-white rounded-xl overflow-hidden md:hover:-translate-y-1 transition-transform duration-300 shadow-sm hover:shadow-md block h-full">
                 <div className="relative aspect-[4/3] overflow-hidden bg-[#E8E3CC]">
                   <ImagemProduto
                     src={peixe.imagem_url}
                     alt={peixe.nome}
                     largura={450}
-                    className="w-full h-full object-contain hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-contain md:hover:scale-105 transition-transform duration-500"
                   />
                   {peixe._novidade && (
                     <span className="absolute top-3 left-3 bg-[#5B8C7A] text-white text-xs font-medium px-3 py-1 rounded-full z-10">Novidade</span>
@@ -97,8 +97,8 @@ function Destaques() {
                 </div>
                 <div className="p-5">
                   <span className="text-xs font-medium tracking-widest uppercase text-[#9C8A6A] block mb-1">{peixe.categoria}</span>
-                  <div className="font-serif text-xl text-[#2C2416] mb-1">{peixe.nome_base || peixe.nome}</div>
-                  <span className="font-serif italic text-sm text-[#7A6A52] block mb-3">{peixe.nome_cientifico}</span>
+                  <div className="font-serif text-xl text-[#2C2416] mb-1 line-clamp-1">{peixe.nome_base || peixe.nome}</div>
+                  <span className="font-serif italic text-sm text-[#7A6A52] block mb-3 truncate">{peixe.nome_cientifico}</span>
                   <div className="flex justify-between items-center pt-3 border-t border-[#E8E3CC]">
                     <span className="font-serif text-2xl font-semibold text-[#6B5B3E]">{peixe.preco}</span>
                     <span className="bg-[#5B8C7A] text-white text-sm px-4 py-2 rounded">Ver detalhes</span>
