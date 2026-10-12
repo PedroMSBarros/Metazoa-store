@@ -14,11 +14,11 @@ function Home() {
     <div className="bg-[#F4F1E1]">
       <Header />
       <Hero />
+      <MarcasCarousel />
+      <Categorias />
       <Novidades />
       <Destaques />
       <ProdutosDestaque />
-      <MarcasCarousel />
-      <Categorias />
       <Sobre />
       <Cuidados />
       <Footer />
