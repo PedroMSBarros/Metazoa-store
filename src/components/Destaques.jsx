@@ -6,7 +6,6 @@ import CarrosselCards from './CarrosselCards'
 import { supabase } from '../lib/supabase'
 
 const TAMANHO_POOL = 150
-const QTD_NOVIDADE = 8
 
 function embaralhar(lista) {
   const copia = [...lista]
@@ -25,7 +24,7 @@ function Destaques() {
     async function buscarPeixes() {
       const { data, error } = await supabase
         .from('peixes')
-        .select('id, nome, nome_base, nome_cientifico, categoria, preco, imagem_url, disponivel, grupo_variante, criado_em')
+        .select('id, nome, nome_base, nome_cientifico, categoria, preco, badge, imagem_url, disponivel, grupo_variante, criado_em')
         .order('criado_em', { ascending: false })
         .limit(TAMANHO_POOL)
 
@@ -38,8 +37,7 @@ function Destaques() {
           vistos.add(p.grupo_variante)
           return true
         })
-        const comNovidade = semDuplicarVariantes.map((p, i) => ({ ...p, _novidade: i < QTD_NOVIDADE }))
-        setPeixes(embaralhar(comNovidade))
+        setPeixes(embaralhar(semDuplicarVariantes))
       }
       setCarregando(false)
     }
@@ -91,8 +89,8 @@ function Destaques() {
                     largura={450}
                     className="w-full h-full object-contain md:hover:scale-105 transition-transform duration-500"
                   />
-                  {peixe._novidade && (
-                    <span className="absolute top-3 left-3 bg-[#5B8C7A] text-white text-xs font-medium px-3 py-1 rounded-full z-10">Novidade</span>
+                  {peixe.badge && (
+                    <span className="absolute top-3 left-3 bg-[#5B8C7A] text-white text-xs font-medium px-3 py-1 rounded-full z-10">{peixe.badge}</span>
                   )}
                 </div>
                 <div className="p-5">

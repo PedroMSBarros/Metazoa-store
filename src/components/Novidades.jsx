@@ -5,9 +5,7 @@ import ImagemProduto from './ImagemProduto'
 import CarrosselCards from './CarrosselCards'
 import { supabase } from '../lib/supabase'
 
-const QTD_NOVIDADES = 15
-
-// Carrossel so com os ultimos 15 peixes adicionados, do mais novo para o mais antigo, em loop
+// Carrossel com todos os peixes que estao com a badge Novidade, do mais novo para o mais antigo, em loop
 function Novidades() {
   const [peixes, setPeixes] = useState([])
   const [carregando, setCarregando] = useState(true)
@@ -18,9 +16,9 @@ function Novidades() {
         .from('peixes')
         .select('id, nome, nome_base, nome_cientifico, categoria, preco, imagem_url, grupo_variante')
         .eq('disponivel', true)
+        .eq('badge', 'Novidade')
         .not('imagem_url', 'is', null)
         .order('criado_em', { ascending: false })
-        .limit(60)
 
       if (!error && data) {
         // Um card por grupo de tamanhos (mesma regra do carrossel de destaques)
@@ -31,7 +29,7 @@ function Novidades() {
           vistos.add(p.grupo_variante)
           return true
         })
-        setPeixes(unicos.slice(0, QTD_NOVIDADES))
+        setPeixes(unicos)
       }
       setCarregando(false)
     }
