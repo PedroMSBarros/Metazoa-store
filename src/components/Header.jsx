@@ -15,17 +15,23 @@ function Header() {
   const { totalItens } = useCart()
   const navigate = useNavigate()
   const buscaRef = useRef(null)
+  const buscaMobileRef = useRef(null)
 
   const { sugestoes, carregando } = useBuscaSugestoes(busca)
 
   useEffect(() => {
     function handleClickFora(e) {
-      if (buscaRef.current && !buscaRef.current.contains(e.target)) {
+      // Fecha as sugestoes so quando o toque/clique for fora das DUAS buscas (desktop e mobile).
+      // Antes so olhava a busca desktop, e no celular qualquer toque (inclusive numa sugestao)
+      // escondia a lista antes do clique chegar no item.
+      const dentroDesktop = buscaRef.current && buscaRef.current.contains(e.target)
+      const dentroMobile = buscaMobileRef.current && buscaMobileRef.current.contains(e.target)
+      if (!dentroDesktop && !dentroMobile) {
         setSugestoesVisiveis(false)
       }
     }
-    document.addEventListener('mousedown', handleClickFora)
-    return () => document.removeEventListener('mousedown', handleClickFora)
+    document.addEventListener('pointerdown', handleClickFora)
+    return () => document.removeEventListener('pointerdown', handleClickFora)
   }, [])
 
   function handleBusca(e) {
@@ -146,23 +152,28 @@ function Header() {
 
         {/* Busca mobile */}
         {buscaAberta && (
-          <div className="md:hidden px-4 pb-3 bg-[#2C1A0E] relative">
+          <div ref={buscaMobileRef} className="md:hidden px-4 pb-3 bg-[#2C1A0E] relative">
             <form onSubmit={handleBusca} className="relative">
               <input
-                type="text"
+                type="search"
+                enterKeyHint="search"
+                autoComplete="off"
+                autoCorrect="off"
+                spellCheck={false}
                 value={busca}
                 onChange={e => { setBusca(e.target.value); setSugestoesVisiveis(true) }}
+                onFocus={() => setSugestoesVisiveis(true)}
                 placeholder="Buscar peixe ou produto..."
                 autoFocus
-                className="w-full bg-[#3A2510] border border-[#5A3A20] rounded-full px-4 py-2 pr-10 text-sm text-[#C8D4A0] placeholder-[#7A6A52] focus:outline-none focus:border-[#4A8C1C] transition-colors"
+                className="w-full bg-[#3A2510] border border-[#5A3A20] rounded-full px-4 py-2 pr-10 text-base text-[#C8D4A0] [&::-webkit-search-cancel-button]:hidden placeholder-[#7A6A52] focus:outline-none focus:border-[#4A8C1C] transition-colors"
               />
-              <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2 text-[#7A6A52] hover:text-[#4A8C1C] transition-colors">
+              <button type="submit" aria-label="Buscar" className="absolute right-3 top-1/2 -translate-y-1/2 text-[#7A6A52] hover:text-[#4A8C1C] transition-colors">
                 <Search size={16} />
               </button>
             </form>
 
             {sugestoesVisiveis && busca.trim().length >= 2 && (
-              <div className="mt-2 bg-white rounded-xl shadow-xl border border-[#D9D2B0] overflow-y-auto max-h-[50vh]">
+              <div className="mt-2 bg-white rounded-xl shadow-xl border border-[#D9D2B0] overflow-y-auto max-h-[45vh]">
                 {carregando ? (
                   <div className="p-4 flex justify-center">
                     <Loader className="animate-spin text-[#5B8C7A]" size={18} />
@@ -185,6 +196,9 @@ function Header() {
                         <span className="text-sm font-serif font-semibold text-[#6B5B3E] flex-shrink-0">{item.preco}</span>
                       </button>
                     ))}
+                    <button onClick={handleBusca} className="w-full p-3 text-sm text-[#5B8C7A] font-medium text-center border-t border-[#F4F1E1]">
+                      Ver todos os resultados para "{busca}"
+                    </button>
                   </>
                 )}
               </div>
