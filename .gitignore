@@ -24,3 +24,10 @@ dist-ssr
 *.sw?
 .env
 .env.local
+
+
+Claude outputs/
+fotos-wtrotter/
+poytara-precos-mercado.csv
+pendencias-wtrotter.md
+urls-wtrotter.json
