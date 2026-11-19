@@ -24,7 +24,6 @@ Como a maior parte do tráfego vem do celular, o projeto é pensado **mobile-fir
 | 🔀 React Router DOM v7 | Navegação (HashRouter) |
 | 🗄️ Supabase (PostgreSQL) | Banco de dados com Row Level Security |
 | ☁️ Cloudinary | Hospedagem e otimização de imagens |
-| 🔎 Fuse.js | Busca com correspondência aproximada |
 | 🎞️ Framer Motion | Animações |
 | 🔣 Lucide React | Ícones |
 | 📱 PWA | Instalável no celular |
@@ -40,9 +39,14 @@ Como a maior parte do tráfego vem do celular, o projeto é pensado **mobile-fir
 - 🚫 **Controle de disponibilidade** — itens indisponíveis ficam em escala de cinza, com badge "Indisponível", vão para o fim da lista e trocam o botão de compra por "Consultar disponibilidade" no WhatsApp
 - 📄 Paginação client-side ("Carregar mais", 24 itens por vez) para manter o catálogo leve
 
-**Busca**
-- 🔍 Busca unificada entre o Header e o Catálogo — mesma lógica, mesmos resultados
-- Primeiro faz correspondência normalizada (sem acentos/maiúsculas) por nome, nome científico e categoria; depois usa Fuse.js com tolerância baixa só para pequenas variações de grafia (ex.: "beta" → "betta")
+**Busca** — motor próprio (`src/lib/fuzzySearch.js`), compartilhado entre o Header e o Catálogo
+- 🔀 **Palavras em qualquer ordem** — "bandeira acará" encontra "Acará Bandeira"; cada palavra digitada precisa aparecer no item
+- 🗣️ **Compara pelo som, não letra por letra** — ignora acentos, maiúsculas e pontuação; letras dobradas viram uma só (`ocellaris` = `ocelaris`, `betta` = `beta`); trocas comuns de grafia são igualadas (y/i, ph/f, k/c, w/v, z/s, ch/c, h mudo); plural no fim é ignorado
+- ⌨️ **Tolera erros de digitação** — distância de edição Damerau (inclui letras trocadas de lugar): 1 erro em palavras de 4–6 letras, 2 em palavras maiores
+- ✍️ **Busca enquanto digita** — aceita palavra pela metade (`ocel` → *ocellaris*)
+- 📚 **Sinônimos do aquarismo** — `pleco` = cascudo, `nemo` = palhaço, `goldfish` = kinguio, `aquecedor` = termostato…
+- 🔢 **Códigos de cascudo normalizados** — `L 66`, `L-066` e `l66` viram todos `L066`
+- 🎯 **Ranking por relevância** — nome pesa mais que categoria, palavras raras pesam mais que comuns, a frase exata no nome vai para o topo; quando existe resultado certeiro, os parecidos só por erro de digitação somem (ex.: "aruana" não traz "aranha")
 
 **Compra**
 - 🛒 Carrinho com controle de quantidade (soma automática quando o item já está no carrinho)
@@ -50,7 +54,10 @@ Como a maior parte do tráfego vem do celular, o projeto é pensado **mobile-fir
 - 🤖 Chatbot de atendimento e botão flutuante do WhatsApp
 
 **Home**
-- Hero, categorias, carrossel de **Destaques** (6 itens disponíveis mais recentes) e carrossel infinito de **marcas parceiras**
+- Hero, carrossel infinito de **marcas parceiras** e seção de categorias
+- 🆕 Carrossel **Novidades** — todos os peixes disponíveis com o badge "Novidade", do mais recente para o mais antigo, em loop automático e com um card por grupo de tamanhos; a seção some sozinha quando não há novidades
+- Carrossel de **Destaques** de peixes
+- Carrossel **Produtos em destaque** — sorteia entre os produtos mais recentes com foto e disponíveis (sem peças de reposição), marcando os mais novos com "Novidade"
 - Páginas Sobre e Guia de Cuidados para aquaristas
 
 **Performance & mobile**
@@ -85,7 +92,7 @@ Todas as credenciais (Cloudinary e `service_role` do Supabase) são lidas de **v
 | `nome_cientifico` | text | Nome científico |
 | `categoria` | text | Categoria (ver abaixo) |
 | `preco` | text | Preço |
-| `badge` | text | Destaque (Novo, Popular, Raro) |
+| `badge` | text | Destaque (ex.: Novidade, Popular, Raro) — "Novidade" alimenta o carrossel da Home |
 | `imagem_url` | text | URL da imagem (Cloudinary) |
 | `disponivel` | boolean | Disponibilidade (padrão `true`) |
 | `grupo_variante` | text | Agrupa tamanhos do mesmo peixe |
